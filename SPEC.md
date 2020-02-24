@@ -58,4 +58,10 @@ The main objective of this section is to design and implementation of summaries 
 
 >Developed by 19439822 LI Jinhui
 
-This part of function is aiming to give people some information of measurements against Coronavirus. The chat bot may have three features. 1. If user send one question or just one keyword to the bot, it will be able to search in the database and provide a related answer. For example. If user send "How do people measure the Coronavirus?" or "Measurement", etc, the chat bot will search related records in redis and reply the related information. 2. The bot will remember how many times each answer used and provide a rank list. 3. If user send a voice message to the bot, it is able to reply it.
+This part of function is aiming to give people some information of measurements against Coronavirus. The chat bot may have three features. 
+
+1. If user send one question or just one keyword to the bot, it will be able to search in the database and provide a related answer. For example. If user send "How do people measure the Coronavirus?" or "Measurement", etc, the chat bot will search related records in redis and reply the related information. 
+
+2. The bot will remember how many times each answer used and provide a rank list. 
+ 
+3. If user send a voice message to the bot, it is able to reply it.
