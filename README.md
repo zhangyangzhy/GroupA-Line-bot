@@ -1,6 +1,8 @@
 # GroupA-Line-bot
+
 ## Team Members
-|  StudentID   | Name  |
+
+|  Student ID   | Student Name  |
 |  ----  | ----  |
 | 19441789  | ZHANG Yang |
 | 19439822  | LI Jinhui |
