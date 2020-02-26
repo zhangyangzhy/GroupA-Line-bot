@@ -52,7 +52,22 @@ In terms of the Redis database, two tables will be created, one is used to store
 
 >Developed by 19434405 WU Peicong
 
-The main objective of this section is to design and implementation of summaries of news, which include two functions. One is the least news from the Internet. When users send the news keyword, the chatbot will send some news at present back to users. Another is the top 5 news among all the news, which have been read recently. That is to say after reading the news, the chatbot will count the reading time. When we send the chatbot with hottest keyword, it will return us the top 5 news according to the recent reading records.
+The main objective of this section is to design and implementation of summaries of news, which include two functions. Users can retrieve the latest news about the novel coronavirus through the chatbot. Also, it provides news ranking, which depends on the news recently read. 
+
+***1. One is the latest news***
+ 
+* **When users send the `"News"` keyword, the chatbot will send the latest news about the novel coronavirus from the Internet back to users.**
+
+* **This function will consume other services.**
+
+***2. Another is news ranking***
+ 
+* **Users can send chatbot `"Ranking"`, it will return a news ranking to users. That is to say after reading the news, the chatbot will count the reading time and store it into a Redis database.**
+
+* **The ranking will dynamically adjust the news. For example, the life of news is only for a day. The news will be removed, which exists more than a day. Of course, if the news is valid, the ranking will base on the reading time.**
+
+* **Similarly, the ranking will also provide the title of news and the reading time related to it. Users can read the news on the ranking with sending the title of news to the chatbot.**
+
 
 ### Module 3 - the Measurement Against Coronavirus
 
