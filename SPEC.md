@@ -62,6 +62,6 @@ This part of function is aiming to give people some information of measurements 
 
 1. If user send one question or just one keyword to the bot, it will be able to search in the database and provide a related answer. For example. If user send "How do people measure the Coronavirus?" or "Measurement", etc, the chat bot will search related records in redis and reply the related information. 
 
-2. The bot will remember how many times each answer used and provide a rank list. 
+2. The bot can provide users with basic measurements and recommendations. If user send "basic measurements", the bot will give some advice by asking several questions.
  
 3. If user send a voice message to the bot, it is able to reply it.
