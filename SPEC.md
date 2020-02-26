@@ -56,17 +56,17 @@ The main objective of this section is to design and implementation of summaries 
 
 ***1. One is the latest news***
  
-* **When users send the `"News"` keyword, the chatbot will send the latest news about the novel coronavirus from the Internet back to users.**
+* When users send the `"News"` keyword, the chatbot will send the latest news about the novel coronavirus from the Internet back to users.
 
-* **This function will consume other services.**
+* This function will consume other services.
 
 ***2. Another is news ranking***
  
-* **Users can send chatbot `"Ranking"`, it will return a news ranking to users. That is to say after reading the news, the chatbot will count the reading time and store it into a Redis database.**
+* Users can send chatbot `"Ranking"`, it will return a news ranking to users. That is to say after reading the news, the chatbot will count the reading time and store it into a Redis database.
 
-* **The ranking will dynamically adjust the news. For example, the life of news is only for a day. The news will be removed, which exists more than a day. Of course, if the news is valid, the ranking will base on the reading time.**
+* The ranking will dynamically adjust the news. For example, the life of news is only for a day. The news will be removed, which exists more than a day. Of course, if the news is valid, the ranking will base on the reading time.
 
-* **Similarly, the ranking will also provide the title of news and the reading time related to it. Users can read the news on the ranking with sending the title of news to the chatbot.**
+* Similarly, the ranking will also provide the title of news and the reading time related to it. Users can read the news on the ranking with sending the title of news to the chatbot.
 
 
 ### Module 3 - the Measurement Against Coronavirus
