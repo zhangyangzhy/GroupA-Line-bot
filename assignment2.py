@@ -104,7 +104,7 @@ def handle_StickerMessage(event):
     if int(event.message.package_id) >= 2000000:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage("Sorry!!!, your sticker is not in available sticker list.")
+            TextSendMessage("Sorry!!!test, your sticker is not in available sticker list.")
         )
     else:
         line_bot_api.reply_message(
