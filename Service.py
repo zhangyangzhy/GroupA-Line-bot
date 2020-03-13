@@ -15,7 +15,7 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage
+    FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, MessageTemplateAction
 )
 from linebot.utils import PY3
 
@@ -60,6 +60,8 @@ def callback():
 
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
+        if isinstance(event,FollowEvent):
+            handle_FollowEvent(event)
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
@@ -79,6 +81,34 @@ def callback():
             continue
 
     return 'OK'
+
+# Handler function for Follow Message
+def handle_FollowEvent(event):
+    button_template_message = ButtonsTemplate(
+        thumbnail_image_url="https://i.imgur.com/eTldj2E.png?1",
+        title='Menu',
+        text='歡迎follow',
+        image_size="cover",
+        actions=[
+            MessageTemplateAction(
+                label='功能1', text='function-1'
+            ),
+            MessageTemplateAction(
+                label='功能2', text='function-2'
+            ),
+            MessageTemplateAction(
+                label='功能3', text='function-3'
+            ),
+        ]
+    )
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TemplateSendMessage(
+            alt_text="Follow Event",
+            template=button_template_message
+        )
+    )
 
 # Handler function for Text Message
 def handle_TextMessage(event):
