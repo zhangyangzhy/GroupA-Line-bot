@@ -93,13 +93,13 @@ def handle_FollowEvent(event):
         image_size="cover",
         actions=[
             PostbackTemplateAction(
-                label='Finding Face Mask or Cleaning Substance', data='Module 1 Tutorial'
+                label='Publish and Search', data='Module 1 Tutorial'
             ),
             PostbackTemplateAction(
                 label='Summaries of News', data='Module 2 Tutorial'
             ),
             PostbackTemplateAction(
-                label='the Measurement Against Coronavirus', data='#Module 3 Tutorial'
+                label='Way to Anti-Coronavirus', data='#Module 3 Tutorial'
             ),
         ]
     )
