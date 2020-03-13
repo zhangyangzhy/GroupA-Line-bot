@@ -15,7 +15,7 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackTemplateAction
+    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction
 )
 from linebot.utils import PY3
 
@@ -92,13 +92,13 @@ def handle_FollowEvent(event):
         text='Welcome to follow, we have the following three modules, click one to get the tutorial:',
         image_size="cover",
         actions=[
-            PostbackTemplateAction(
+            PostbackAction(
                 label='Publish and Search', data='Module 1 Tutorial'
             ),
-            PostbackTemplateAction(
+            PostbackAction(
                 label='Summaries of News', data='Module 2 Tutorial'
             ),
-            PostbackTemplateAction(
+            PostbackAction(
                 label='Way to Anti-Coronavirus', data='#Module 3 Tutorial'
             ),
         ]
