@@ -94,16 +94,16 @@ def handle_FollowEvent(event):
         image_size="cover",
         actions=[
             PostbackAction(
-                label='Publish and Search', data='Module 1 Tutorial'
-                # label = 'Publish', data = 'Module 1 Tutorial'
+                # label='Publish and Search', data='Module 1 Tutorial'
+                label = 'Publish', data = 'Module 1 Tutorial'
             ),
             PostbackAction(
-                label='Summaries of News', data='Module 2 Tutorial'
-                # label = 'Publish', data = 'Module 1 Tutorial'
+                # label='Summaries of News', data='Module 2 Tutorial'
+                label = 'Publish', data = 'Module 1 Tutorial'
             ),
             PostbackAction(
-                label='Way to Anti-Coronavirus', data='#Module 3 Tutorial'
-                # label = 'Publish', data = 'Module 1 Tutorial'
+                # label='Way to Anti-Coronavirus', data='#Module 3 Tutorial'
+                label = 'Publish', data = 'Module 1 Tutorial'
             ),
         ]
     )
