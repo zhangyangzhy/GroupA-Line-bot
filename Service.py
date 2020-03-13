@@ -116,18 +116,30 @@ def handle_FollowEvent(event):
 def handle_PostbackEvent(event):
     if event.postback.data == "#Module 1 Tutorial":
         msg = '''Module 1 Tutorial:
+
 1. Reply '#My Information' to find the historical store information that you have published;
+
 2. Reply '#Publish Information' to publish the information;
+
 3. Reply '#Search Information' to query the records within 10KM of your current location;
+
 4. Reply '#Delete Information-Record ID' to delete the specific record you have published permanently;
+
 5. Reply '#Modify Information-Record ID' to modify the attribute value;
+
 6. Reply '#Comment-Record ID' to comment on store information that is not published by yourself;
+
 7. Reply '#Rate-Record ID' to rate the credibility of store information;
+
 8. Reply '#Exit' to terminate the current procedure.'''
     elif event.postback.data == "#Module 2 Tutorial":
-        msg = "#Module 2 Tutorial"
+        msg = '''Module 2 Tutorial:
+TO DO...
+Written by WU Peicong'''
     elif event.postback.data == "#Module 3 Tutorial":
-        msg = "#Module 3 Tutorial"
+        msg = '''Module 3 Tutorial:
+TO DO...
+Written by LI Jinhui'''
     else:
         msg = "Error"
     line_bot_api.reply_message(
