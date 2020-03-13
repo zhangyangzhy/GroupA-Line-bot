@@ -15,9 +15,11 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction
+    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction, LocationMessage
 )
 from linebot.utils import PY3
+from ZHY import ProcessMessage
+import json
 
 app = Flask(__name__)
 
@@ -68,6 +70,8 @@ def callback():
             continue
         if isinstance(event.message, TextMessage):
             handle_TextMessage(event)
+        if isinstance(event.message, LocationMessage):
+            handle_LocationMessage(event)
         if isinstance(event.message, ImageMessage):
             handle_ImageMessage(event)
         if isinstance(event.message, VideoMessage):
@@ -103,7 +107,6 @@ def handle_FollowEvent(event):
             ),
         ]
     )
-
     line_bot_api.reply_message(
         event.reply_token,
         TemplateSendMessage(
@@ -149,10 +152,19 @@ Written by LI Jinhui'''
 
 # Handler function for Text Message
 def handle_TextMessage(event):
-    msg = 'You said: "' + event.message.text + '" '
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(msg)
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).filter())
+    )
+
+# Handler function for Location Message
+def handle_LocationMessage(event):
+    dic = {"latlng": str(event.message.latitude) + "," + str(event.message.longitude),"address":event.message.address}
+    text = json.dumps(dic)
+    print(text)
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(ProcessMessage(event.source.user_id, text).filter())
     )
 
 # Handler function for Sticker Message
