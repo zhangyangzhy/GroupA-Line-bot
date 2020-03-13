@@ -89,7 +89,7 @@ def handle_FollowEvent(event):
     button_template_message = ButtonsTemplate(
         thumbnail_image_url="https://obs.line-scdn.net/0h_TFUioZ5AHt7LCh0KO1_LFpxCxlITh5wWUpIGVwkXE1RHEBDExhPHg0sWhwBT0AuT0gbHjAsVh5XFUQrQA9OTg4pV09fGw/f256x256",
         title='Module List',
-        text='Welcome to follow, we have the following three modules, click one to get the tutorial:',
+        text='Welcome to follow, click one to get the module tutorial:',
         image_size="contain",
         actions=[
             PostbackAction(
