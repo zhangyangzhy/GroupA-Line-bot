@@ -115,11 +115,14 @@ def handle_FollowEvent(event):
 # Handler function for Postback Event
 def handle_PostbackEvent(event):
     if event.postback.data == "#Module 1 Tutorial":
-        msg = "#Module 1 Tutorial"
+        msg = "#Module 1 Tutorial\n#Module 2 Tutorial"
     elif event.postback.data == "#Module 2 Tutorial":
-        msg = "#Module 2 Tutorial"
+        msg = '''
+            #Module 2 Tutorial
+            #Module 2 Tutorial
+        '''
     elif event.postback.data == "#Module 3 Tutorial":
-        msg = "#Module 3 Tutorial"
+        msg = "#Module 3 Tutorial\\n#Module 2 Tutorial"
     else:
         msg = "Error"
     line_bot_api.reply_message(
