@@ -89,21 +89,17 @@ def handle_FollowEvent(event):
     button_template_message = ButtonsTemplate(
         thumbnail_image_url="https://obs.line-scdn.net/0h_TFUioZ5AHt7LCh0KO1_LFpxCxlITh5wWUpIGVwkXE1RHEBDExhPHg0sWhwBT0AuT0gbHjAsVh5XFUQrQA9OTg4pV09fGw/f256x256",
         title='Module List',
-        # text='Welcome to follow, we have the following three modules, click one to get the tutorial:',
-        text='Welcome to follow',
-        image_size="cover",
+        text='Welcome to follow, we have the following three modules, click one to get the tutorial:',
+        image_size="contain",
         actions=[
             PostbackAction(
-                # label='Publish and Search', data='Module 1 Tutorial'
-                label = 'Publish', data = 'Module 1 Tutorial'
+                label='Publish & Search', data='#Module 1 Tutorial'
             ),
             PostbackAction(
-                # label='Summaries of News', data='Module 2 Tutorial'
-                label = 'Publish', data = 'Module 1 Tutorial'
+                label='News Summaries', data='#Module 2 Tutorial'
             ),
             PostbackAction(
-                # label='Way to Anti-Coronavirus', data='#Module 3 Tutorial'
-                label = 'Publish', data = 'Module 1 Tutorial'
+                label='Anti-Coronavirus', data='#Module 3 Tutorial'
             ),
         ]
     )
