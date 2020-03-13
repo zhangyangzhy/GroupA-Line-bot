@@ -15,7 +15,7 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-    FollowEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, MessageTemplateAction
+    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackTemplateAction
 )
 from linebot.utils import PY3
 
@@ -62,6 +62,8 @@ def callback():
     for event in events:
         if isinstance(event,FollowEvent):
             handle_FollowEvent(event)
+        if isinstance(event,PostbackEvent):
+            handle_PostbackEvent(event)
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
@@ -82,22 +84,22 @@ def callback():
 
     return 'OK'
 
-# Handler function for Follow Message
+# Handler function for Follow Event
 def handle_FollowEvent(event):
     button_template_message = ButtonsTemplate(
-        thumbnail_image_url="https://i.imgur.com/eTldj2E.png?1",
-        title='Menu',
-        text='歡迎follow',
+        thumbnail_image_url="Logo.png",
+        title='Module List',
+        text='Welcome to follow, we have the following three modules, click one to get the tutorial:',
         image_size="cover",
         actions=[
-            MessageTemplateAction(
-                label='功能1', text='function-1'
+            PostbackTemplateAction(
+                label='Finding Face Mask or Cleaning Substance', data='Module 1 Tutorial'
             ),
-            MessageTemplateAction(
-                label='功能2', text='function-2'
+            PostbackTemplateAction(
+                label='Summaries of News', data='Module 2 Tutorial'
             ),
-            MessageTemplateAction(
-                label='功能3', text='function-3'
+            PostbackTemplateAction(
+                label='the Measurement Against Coronavirus', data='#Module 3 Tutorial'
             ),
         ]
     )
@@ -110,9 +112,23 @@ def handle_FollowEvent(event):
         )
     )
 
+# Handler function for Postback Event
+def handle_PostbackEvent(event):
+    if event.postback.data == "#Module 1 Tutorial":
+        msg = "#Module 1 Tutorial"
+    elif event.postback.data == "#Module 2 Tutorial":
+        msg = "#Module 2 Tutorial"
+    elif event.postback.data == "#Module 3 Tutorial":
+        msg = "#Module 3 Tutorial"
+    else:
+        msg = "Error"
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(msg)
+    )
+
 # Handler function for Text Message
 def handle_TextMessage(event):
-    print(event)
     msg = 'You said: "' + event.message.text + '" '
     line_bot_api.reply_message(
         event.reply_token,
