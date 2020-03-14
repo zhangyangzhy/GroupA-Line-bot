@@ -161,7 +161,6 @@ def handle_TextMessage(event):
 def handle_LocationMessage(event):
     dic = {"latlng": str(event.message.latitude) + "," + str(event.message.longitude),"address":event.message.address}
     text = json.dumps(dic)
-    print(text)
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(ProcessMessage(event.source.user_id, text).filter())
