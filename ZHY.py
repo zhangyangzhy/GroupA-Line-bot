@@ -41,6 +41,60 @@ class ProcessMessage:
                 sum = sum + int(self.__redis.get(rate))
             return sum/len(InformationKey)
         return "No rate yet"
+    def __GetComment(self):
+        Informationid = self.__message
+        CommentKey = self.__redis.keys("Comment:*:" + Informationid)
+        if len(CommentKey) == 0:
+            return "No one comment this information"
+        else:
+            contents = []
+            for key in CommentKey:
+                comment = self.__redis.get(key)
+                content = json.dumps({
+                        "type": "box",
+                        "layout": "horizontal",
+                        "contents": [
+                          {
+                            "type": "text",
+                            "text": "%(c)s",
+                            "size": "sm",
+                            "color": "#555555",
+                            "flex": 0,
+                            "wrap": "true"
+                          }
+                        ]
+                      }) % {'c':comment}
+                contents.append(json.loads(content))
+                contents.append({"type": "separator"})
+            config = {
+              "type": "bubble",
+              "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "text",
+                    "text": "评论",
+                    "weight": "bold",
+                    "color": "#1DB446",
+                    "size": "md",
+                    "margin": "sm"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "sm",
+                    "contents": contents,
+                    "margin": "sm"
+                  }
+                ]
+              },
+              "styles": {
+                "footer": {
+                }
+              }
+            }
+            return config
     def __MyInformation(self):
         InformationKey = self.__redis.keys("Information:" + self.__userid + ":*")
         if len(InformationKey) == 0:
@@ -212,7 +266,7 @@ class ProcessMessage:
                                 "type": "button",
                                 "action": {
                                   "type": "postback",
-                                  "label": "Location",
+                                  "label": "Get Location",
                                   "data": "%(Location)s"
                                 },
                                 "style": "primary",
@@ -230,7 +284,7 @@ class ProcessMessage:
                                 "action": {
                                   "type": "postback",
                                   "label": "Check Comment",
-                                  "data": "id"
+                                  "data": "%(Comment)s"
                                 },
                                 "style": "link",
                                 "height": "sm"
@@ -248,7 +302,8 @@ class ProcessMessage:
                     'q':dic["Quantity"],
                     't':datetime.datetime.fromtimestamp(float(dic["Datetime"]), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S'),
                     'a':json.loads(dic["Location"])["address"],
-                    'Location':"Address="+str(json.loads(dic["Location"])["address"])+"&Lat="+str(lat)+"&Lng="+str(lng)+"&Title="+str(dic["Store Name"])
+                    'Location':"Address="+str(json.loads(dic["Location"])["address"])+"&Lat="+str(lat)+"&Lng="+str(lng)+"&Title="+str(dic["Store Name"]),
+                    'Comment':"GetComment="+id
                 }
                 contents.append(json.loads(content))
             config = {
@@ -375,6 +430,8 @@ class ProcessMessage:
             else:
                 return "Error!"
     def public(self,EventType):
+        if EventType == "GetComment":
+            return self.__GetComment()
         key = "NextEvent:" + self.__userid
         if self.__redis.exists(key):
             value = self.__redis.get(key)
