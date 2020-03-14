@@ -54,7 +54,7 @@ class ProcessMessage:
                 # Store next validate Event Type
                 self.__redis.set(EventKey, event[self.__redis.hlen(InformationKey) + 1], ex=self.__expire)
                 next = attribute[self.__redis.hlen(InformationKey) + 1]
-                self.__redis.set(ActionKey, "#Publish Information", ex=self.__expire)
+                self.__redis.set(ActionKey, "#publish", ex=self.__expire)
                 self.__redis.hset(InformationKey, current, int(time.time()) if self.__redis.hlen(InformationKey) == 0 else self.__message)
                 self.__redis.expire(InformationKey, self.__expire)
                 return "Please reply the " + next + " (" + event[self.__redis.hlen(InformationKey)] + "):"
@@ -76,47 +76,47 @@ class ProcessMessage:
         return "Procedure is over"
     def __Filter(self):
         key = "Action:"+self.__userid
-        if self.__message == "#My Information":
-            self.__redis.set(key, "#My Information", ex=self.__expire)
+        if self.__message == "#my":
+            self.__redis.set(key, "#my", ex=self.__expire)
             return self.__MyInformation()
-        elif self.__message == "#Publish Information":
+        elif self.__message == "#publish":
             # In case processing the same procedure again
             self.__Exit()
             return self.__PublishInformation()
-        elif self.__message == "#Search Information":
-            self.__redis.set(key, "#Search Information", ex=self.__expire)
+        elif self.__message == "#search":
+            self.__redis.set(key, "#search", ex=self.__expire)
             return self.__SearchInformation()
-        elif self.__message.startswith("#Delete Information-"):
-            self.__redis.set(key, "#Delete Information", ex=self.__expire)
+        elif self.__message.startswith("#delete-"):
+            self.__redis.set(key, "#delete", ex=self.__expire)
             return self.__DeleteInformation()
-        elif self.__message.startswith("#Modify Information-"):
-            self.__redis.set(key, "#Modify Information", ex=self.__expire)
+        elif self.__message.startswith("#modify-"):
+            self.__redis.set(key, "#modify", ex=self.__expire)
             return self.__ModifyInformation()
-        elif self.__message.startswith("#Comment-"):
-            self.__redis.set(key, "#Comment", ex=self.__expire)
+        elif self.__message.startswith("#comment-"):
+            self.__redis.set(key, "#comment", ex=self.__expire)
             return self.__Comment()
-        elif self.__message.startswith("#Rate-"):
-            self.__redis.set(key, "#Rate", ex=self.__expire)
+        elif self.__message.startswith("#rate-"):
+            self.__redis.set(key, "#rate", ex=self.__expire)
             return self.__Rate()
-        elif self.__message == "#Exit":
+        elif self.__message == "#exit":
             return self.__Exit()
         else:
-            if self.__redis.get(key) == b"#Publish Information":
+            if self.__redis.get(key) == b"#publish":
                 return self.__PublishInformation()
-            elif self.__redis.get(key) == b"#Search Information":
+            elif self.__redis.get(key) == b"#search":
                 return self.__SearchInformation()
-            elif self.__redis.get(key) == b"#Delete Information":
+            elif self.__redis.get(key) == b"#delete":
                 return self.__DeleteInformation()
-            elif self.__redis.get(key) == b"#Modify Information":
+            elif self.__redis.get(key) == b"#modify":
                 return self.__ModifyInformation()
             else:
-                return "Error"
+                return "Error!"
     def public(self,EventType):
         key = "NextEvent:" + self.__userid
         if self.__redis.exists(key):
             value = self.__redis.get(key).decode()
-            if self.__message == "#Exit":
+            if self.__message == "#exit":
                 return self.__Exit()
             if EventType != value:
-                return "Event type error, need " + value + ", please reply again (or you can reply #Exit to end the current procedure)"
+                return "Event type error, need " + value + ", please reply again (or you can reply #exit to end the current procedure)"
         return self.__Filter()

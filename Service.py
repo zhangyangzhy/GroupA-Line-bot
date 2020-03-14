@@ -123,21 +123,21 @@ def handle_PostbackEvent(event):
     if event.postback.data == "#Module 1 Tutorial":
         msg = '''Module 1 Tutorial:
 
-1. Reply '#My Information' to find the historical store information that you have published;
+1. Reply '#my' to find the historical store information that you have published;
 
-2. Reply '#Publish Information' to publish the information;
+2. Reply '#publish' to publish the information;
 
-3. Reply '#Search Information' to query the records within 10KM of your current location;
+3. Reply '#search' to query the records within 10KM of your current location;
 
-4. Reply '#Delete Information-Record ID' to delete the specific record you have published permanently;
+4. Reply '#delete-ID' to delete the specific record you have published permanently;
 
-5. Reply '#Modify Information-Record ID' to modify the attribute value;
+5. Reply '#modify-ID' to modify the attribute value;
 
-6. Reply '#Comment-Record ID' to comment on store information that is not published by yourself;
+6. Reply '#comment-ID' to comment on store information that is not published by yourself;
 
-7. Reply '#Rate-Record ID' to rate the credibility of store information;
+7. Reply '#rate-ID' to rate the credibility of store information;
 
-8. Reply '#Exit' to terminate the current procedure.'''
+8. Reply '#exit' to terminate the current procedure.'''
     elif event.postback.data == "#Module 2 Tutorial":
         msg = '''Module 2 Tutorial:
 TO DO...
@@ -166,7 +166,7 @@ def handle_TextMessage(event):
             TextSendMessage("TO DO...Written by LI Jinhui")
         )
     else:
-        if ProcessMessage(event.source.user_id, event.message.text).public("TextMessage") == "Error":
+        if ProcessMessage(event.source.user_id, event.message.text).public("TextMessage") == "Error!":
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text='Please input action first (you can refers the quick reply button)',
