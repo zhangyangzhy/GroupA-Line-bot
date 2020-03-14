@@ -139,6 +139,7 @@ TO DO...
 Written by WU Peicong'''
     elif event.postback.data == "#Module 3 Tutorial":
         msg = '''Module 3 Tutorial:
+
 1. Reply '$measurements' to show information stored in the redis;
 
 2. Reply '$symptoms' to return relative record;

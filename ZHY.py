@@ -63,7 +63,7 @@ class ProcessMessage:
                               {
                                 "type": "text",
                                 "text": "%(s)s",
-                                "wrap": 1,
+                                "wrap": "true",
                                 "weight": "bold",
                                 "size": "xl"
                               },
@@ -81,7 +81,7 @@ class ProcessMessage:
                               {
                                 "type": "text",
                                 "text": "Rate",
-                                "wrap": 1,
+                                "wrap": "true",
                                 "weight": "bold",
                                 "size": "lg"
                               },
@@ -99,7 +99,7 @@ class ProcessMessage:
                               {
                                 "type": "text",
                                 "text": "Price",
-                                "wrap": 1,
+                                "wrap": "true",
                                 "weight": "bold",
                                 "size": "lg"
                               },
@@ -117,7 +117,7 @@ class ProcessMessage:
                               {
                                 "type": "text",
                                 "text": "Quantity",
-                                "wrap": 1,
+                                "wrap": "true",
                                 "weight": "bold",
                                 "size": "lg"
                               },
