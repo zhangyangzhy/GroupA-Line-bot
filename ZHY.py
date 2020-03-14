@@ -241,10 +241,14 @@ class ProcessMessage:
                     'p':dic["Price"],
                     'u':dic["Unit"],
                     'q':dic["Quantity"],
-                    't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(dic["Datetime"]))),
+                    # 't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(dic["Datetime"]))),
+                    't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float("1584197771.3533754"))),
                     'a':json.loads(dic["Location"])["address"]
                 }
                 contents.append(json.loads(content))
+                print(type(dic["Datetime"]))
+                print(dic["Datetime"])
+                print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(dic["Datetime"]))))
             config = {
               "type": "carousel",
               "contents": contents
