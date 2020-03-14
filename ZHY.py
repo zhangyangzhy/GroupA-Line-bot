@@ -1,5 +1,7 @@
 import redis
 import time
+import datetime
+import pytz
 import json
 class Connection:
     def __init__(self):
@@ -241,14 +243,10 @@ class ProcessMessage:
                     'p':dic["Price"],
                     'u':dic["Unit"],
                     'q':dic["Quantity"],
-                    # 't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(dic["Datetime"]))),
-                    't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float("1584197771.3533754"))),
+                    't':datetime.datetime.fromtimestamp(float(dic["Datetime"]), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S'),
                     'a':json.loads(dic["Location"])["address"]
                 }
                 contents.append(json.loads(content))
-                print(type(dic["Datetime"]))
-                print(dic["Datetime"])
-                print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(dic["Datetime"]))))
             config = {
               "type": "carousel",
               "contents": contents
