@@ -15,7 +15,7 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction, LocationMessage
+    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction, LocationMessage, AudioMessage
 )
 from linebot.utils import PY3
 from ZHY import ProcessMessage
@@ -78,6 +78,8 @@ def callback():
             handle_VideoMessage(event)
         if isinstance(event.message, FileMessage):
             handle_FileMessage(event)
+        if isinstance(event.message, AudioMessage):
+            handle_AudioMessage(event)
         if isinstance(event.message, StickerMessage):
             handle_StickerMessage(event)
 
@@ -154,7 +156,7 @@ Written by LI Jinhui'''
 def handle_TextMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).filter())
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("TextMessage"))
     )
 
 # Handler function for Location Message
@@ -163,37 +165,42 @@ def handle_LocationMessage(event):
     text = json.dumps(dic)
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, text).filter())
+        TextSendMessage(ProcessMessage(event.source.user_id, text).public("LocationMessage"))
     )
 
 # Handler function for Sticker Message
 def handle_StickerMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        StickerSendMessage(
-            package_id=event.message.package_id,
-            sticker_id=event.message.sticker_id)
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("StickerMessage"))
     )
 
 # Handler function for Image Message
 def handle_ImageMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text="Nice image!")
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("ImageMessage"))
     )
 
 # Handler function for Video Message
 def handle_VideoMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text="Nice video!")
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("VideoMessage"))
     )
 
 # Handler function for File Message
 def handle_FileMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text="Nice file!")
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("FileMessage"))
+    )
+
+# Handler function for Audio Message
+def handle_AudioMessage(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("AudioMessage"))
     )
 
 if __name__ == "__main__":
