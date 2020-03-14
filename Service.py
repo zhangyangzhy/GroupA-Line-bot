@@ -166,7 +166,8 @@ def handle_TextMessage(event):
             TextSendMessage("TO DO...Written by LI Jinhui")
         )
     else:
-        if ProcessMessage(event.source.user_id, event.message.text).public("TextMessage") == "Error!":
+        message = ProcessMessage(event.source.user_id, event.message.text).public("TextMessage")
+        if message == "Error!":
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text='Please input action first (you can refers the quick reply button)',
@@ -182,7 +183,7 @@ def handle_TextMessage(event):
         else:
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("TextMessage"))
+                TextSendMessage(message)
             )
 
 
