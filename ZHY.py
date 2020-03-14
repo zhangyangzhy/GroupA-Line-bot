@@ -58,7 +58,7 @@ class ProcessMessage:
                 self.__redis.hset(InformationKey, current, int(time.time()) if self.__redis.hlen(InformationKey) == 0 else self.__message)
                 self.__redis.expire(InformationKey, self.__expire)
                 return "Please reply the " + next + " (" + event[self.__redis.hlen(InformationKey)] + "):"
-        return "Data type error, need " + validate[self.__redis.hlen(InformationKey)] + ", please reply again:"
+        return "Data type error, need " + validate[self.__redis.hlen(InformationKey)] + ", please reply again"
     def __DeleteInformation(self):
         return
     def __ModifyInformation(self):
@@ -66,7 +66,18 @@ class ProcessMessage:
     def __SearchInformation(self):
         return
     def __Comment(self):
-        return
+        message = self.__message.split("-",2)
+        informationID = message[1]
+        comment = message[2]
+        InformationKey = self.__redis.keys("Information:*:" + informationID)
+        if len(InformationKey) != 1:
+            return "No such record ID, please reply again"
+        UserID = InformationKey[0].decode().split(":")[1]
+        if UserID == self.__userid:
+            return "Can't comment your own record, please reply again"
+        CommentKey = "Comment:" + self.__userid + ":" + informationID
+        self.__redis.set(CommentKey, comment)
+        return "Comment successfully"
     def __Rate(self):
         return
     def __Exit(self):
@@ -93,7 +104,6 @@ class ProcessMessage:
             self.__redis.set(key, "#modify", ex=self.__expire)
             return self.__ModifyInformation()
         elif self.__message.startswith("#comment-"):
-            self.__redis.set(key, "#comment", ex=self.__expire)
             return self.__Comment()
         elif self.__message.startswith("#rate-"):
             self.__redis.set(key, "#rate", ex=self.__expire)

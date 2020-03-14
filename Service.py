@@ -133,9 +133,9 @@ def handle_PostbackEvent(event):
 
 5. Reply '#modify-ID' to modify the attribute value;
 
-6. Reply '#comment-ID' to comment on store information that is not published by yourself;
+6. Reply '#comment-ID-CONTENT' to comment on store information that is not published by yourself;
 
-7. Reply '#rate-ID' to rate the credibility of store information;
+7. Reply '#rate-ID-SCORE' to rate the credibility of store information;
 
 8. Reply '#exit' to terminate the current procedure.'''
     elif event.postback.data == "#Module 2 Tutorial":
