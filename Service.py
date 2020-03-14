@@ -204,7 +204,7 @@ def handle_Text(event):
     for i in ls:
         print(i)
         # if the key does not exist, return None.
-        value = str(r_li.get(i))
+        value = str(r_li.get(i))[2:-1]
         if value == "None":
             continue
         else:
@@ -267,7 +267,10 @@ Written by WU Peicong'''
 
 3. Reply '$coronavirus' to return general concept of Coronavirus;
 
-4. Reply '$basic measurements' to provide a simple self-test for user.'''
+4. Reply '$basic measurements' to provide a simple self-test for user.
+
+Important:
+Notice: You should add '$' at the beginning of your query when you want to test on this module. Thanks for cooperation. :)'''
     else:
         msg = "Error"
     line_bot_api.reply_message(event.reply_token, TextSendMessage(msg))
@@ -297,6 +300,9 @@ def handle_TextMessage(event):
                     # end of the test, reset the global variables
                     flag = 0
                     test_x, test_y, test_z = 0, 0, 0
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage("Please input again."))
                 else:
                     flag += 1
                     basic_measure(event)
