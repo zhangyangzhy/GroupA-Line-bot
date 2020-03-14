@@ -63,7 +63,6 @@ class ProcessMessage:
                               {
                                 "type": "text",
                                 "text": "%(s)s",
-                                "wrap": "true",
                                 "weight": "bold",
                                 "size": "xl"
                               },
@@ -81,7 +80,6 @@ class ProcessMessage:
                               {
                                 "type": "text",
                                 "text": "Rate",
-                                "wrap": "true",
                                 "weight": "bold",
                                 "size": "lg"
                               },
@@ -99,7 +97,6 @@ class ProcessMessage:
                               {
                                 "type": "text",
                                 "text": "Price",
-                                "wrap": "true",
                                 "weight": "bold",
                                 "size": "lg"
                               },
@@ -117,7 +114,6 @@ class ProcessMessage:
                               {
                                 "type": "text",
                                 "text": "Quantity",
-                                "wrap": "true",
                                 "weight": "bold",
                                 "size": "lg"
                               },
@@ -228,7 +224,6 @@ class ProcessMessage:
                     't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(dic["Datetime"]))),
                     'a':json.loads(dic["Location"])["address"]
                 }
-                print(content)
                 contents.append(json.loads(content))
             config = {
               "type": "carousel",
