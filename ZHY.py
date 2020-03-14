@@ -60,7 +60,6 @@ class ProcessMessage:
                             "size": "sm",
                             "color": "#555555",
                             "flex": 0,
-                            "wrap": "true"
                           }
                         ]
                       }) % {'c':comment}
@@ -305,6 +304,7 @@ class ProcessMessage:
                     'Location':"Address="+str(json.loads(dic["Location"])["address"])+"&Lat="+str(lat)+"&Lng="+str(lng)+"&Title="+str(dic["Store Name"]),
                     'Comment':"GetComment="+id
                 }
+                print("GetComment="+id)
                 contents.append(json.loads(content))
             config = {
               "type": "carousel",

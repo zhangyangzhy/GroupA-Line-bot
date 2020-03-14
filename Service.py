@@ -282,7 +282,9 @@ Notice: You should add '$' at the beginning of your query when you want to test 
         )
     elif event.postback.data.startswith("GetComment="):
         params = parse.parse_qs(event.postback.data)
+        print(params)
         message = ProcessMessage(event.source.user_id,params["GetComment"][0]).public("GetComment")
+        print(message)
         msg = FlexSendMessage(alt_text='test', contents=message)
     else:
         msg = TextSendMessage("Error")
