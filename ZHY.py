@@ -77,6 +77,25 @@ class ProcessMessage:
                             "type": "box",
                             "layout": "horizontal",
                             "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "ID",
+                                    "weight": "bold",
+                                    "size": "lg",
+                                    "color": "#F0AD4E"
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "%(i)s",
+                                    "size": "lg",
+                                    "color": "#F0AD4E"
+                                }
+                            ]
+                          },
+                          {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "contents": [
                               {
                                 "type": "text",
                                 "text": "Rate",
@@ -217,11 +236,12 @@ class ProcessMessage:
                       }
                     }) % {'s':dic["Store Name"],
                     'c':dic["Commodity Name"],
+                    'i':id,
                     'r': self.__GetRate(id),
                     'p':dic["Price"],
                     'u':dic["Unit"],
                     'q':dic["Quantity"],
-                    't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(dic["Datetime"]))),
+                    't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(dic["Datetime"]))),
                     'a':json.loads(dic["Location"])["address"]
                 }
                 contents.append(json.loads(content))
@@ -253,7 +273,7 @@ class ProcessMessage:
                 self.__redis.set(EventKey, event[self.__redis.hlen(InformationKey) + 1], ex=self.__expire)
                 next = attribute[self.__redis.hlen(InformationKey) + 1]
                 self.__redis.set(ActionKey, "#publish", ex=self.__expire)
-                self.__redis.hset(InformationKey, current, int(time.time()) if self.__redis.hlen(InformationKey) == 0 else self.__message)
+                self.__redis.hset(InformationKey, current, time.time() if self.__redis.hlen(InformationKey) == 0 else self.__message)
                 self.__redis.expire(InformationKey, self.__expire)
                 return "Please reply the " + next + " (" + event[self.__redis.hlen(InformationKey)] + "):"
         return "Data type error, need " + validate[self.__redis.hlen(InformationKey)] + ", please reply again"
@@ -265,8 +285,14 @@ class ProcessMessage:
         return
     def __Comment(self):
         message = self.__message.split("-",2)
+        if len(message) != 3:
+            return "Format error, should be #comment-ID-CONTENT, please reply again"
         informationID = message[1]
+        if not informationID.isdigit():
+            return "Record ID data type error, should be integer, please reply again"
         comment = message[2]
+        if comment == "":
+            return "Not allow empty comment, please reply again"
         InformationKey = self.__redis.keys("Information:*:" + informationID)
         if len(InformationKey) != 1:
             return "No such record ID, please reply again"
@@ -278,8 +304,14 @@ class ProcessMessage:
         return "Comment successfully"
     def __Rate(self):
         message = self.__message.split("-", 2)
+        if len(message) != 3:
+            return "Format error, should be #rate-ID-SCORE, please reply again"
         informationID = message[1]
+        if not informationID.isdigit():
+            return "Record ID data type error, should be integer, please reply again"
         rate = message[2]
+        if rate == "":
+            return "Not allow empty score, please reply again"
         InformationKey = self.__redis.keys("Information:*:" + informationID)
         if len(InformationKey) != 1:
             return "No such record ID, please reply again"
