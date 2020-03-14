@@ -263,9 +263,9 @@ Written by WU Peicong'''
 
 1. Reply '$measurements' to show information stored in the redis;
 
-2. Reply '$symptoms' to return relative record;
+2. Reply '$symptoms' to return the symptoms of Coronavirus;
 
-3. Reply '$coronavirus' to find the record in the redis;
+3. Reply '$coronavirus' to return general concept of Coronavirus;
 
 4. Reply '$basic measurements' to provide a simple self-test for user.'''
     else:
