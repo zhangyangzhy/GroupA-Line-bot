@@ -283,10 +283,11 @@ Notice: You should add '$' at the beginning of your query when you want to test 
     elif event.postback.data.startswith("GetComment="):
         params = parse.parse_qs(event.postback.data)
         message = ProcessMessage(event.source.user_id,params["GetComment"][0]).public("GetComment")
-        if isinstance(message, dict):
-            msg = FlexSendMessage(alt_text='test', contents=message)
-        else:
-            msg = TextSendMessage(message)
+        # if isinstance(message, dict):
+        #     msg = FlexSendMessage(alt_text='test', contents=message)
+        # else:
+        #     msg = TextSendMessage(message)
+        msg = TextSendMessage(message)
     else:
         msg = TextSendMessage("Error")
     line_bot_api.reply_message(event.reply_token, msg)
