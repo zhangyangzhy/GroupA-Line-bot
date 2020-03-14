@@ -120,9 +120,9 @@ def basic_measure(event):
     threshold: score threshold
     '''
     re_msg = [
-        "Question 1: Have you been to the epidemic area in the past 14 days? 0(No)/1(Yes)",
-        "Question 2: Have you been in contact with a suspected infected person in the past 14 days? 0(No)/1(Yes)",
-        "Qeustion 3: Do you have fever, cough, or difficulty breathing? 0(No)/1(Yes)"
+        "Question 1: Have you been to the epidemic area in the past 14 days? $0(No)/$1(Yes)",
+        "Question 2: Have you been in contact with a suspected infected person in the past 14 days? $0(No)/$1(Yes)",
+        "Qeustion 3: Do you have fever, cough, or difficulty breathing? $0(No)/$1(Yes)"
     ]
     weight = [0.2, 0.3, 0.5]
     threshold = 0.7
