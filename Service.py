@@ -274,12 +274,13 @@ Important:
 Notice: You should add '$' at the beginning of your query when you want to test on this module. Thanks for cooperation. :)''')
     elif event.postback.data.startswith("Address="):
         params = parse.parse_qs(event.postback.data)
-        msg = LocationSendMessage(
-            title=params["Title"],
-            address=params["Address"],
-            latitude=params["Lat"],
-            longitude=params["Lng"]
-        )
+        print(params)
+        # msg = LocationSendMessage(
+        #     title=params["Title"],
+        #     address=params["Address"],
+        #     latitude=params["Lat"],
+        #     longitude=params["Lng"]
+        # )
     else:
         msg = TextSendMessage("Error")
     line_bot_api.reply_message(event.reply_token, msg)
