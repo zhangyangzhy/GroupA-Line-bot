@@ -36,9 +36,9 @@ class ProcessMessage:
         ActionKey = "Action:" + self.__userid
         InformationKey = "TempInformation:" + self.__userid
         EventKey = "NextEvent:" + self.__userid
-        event = ["TextMessage","TextMessage","TextMessage","ImageMessage","TextMessage","TextMessage","TextMessage","LocationMessage"]
-        validate = ["String","String","String","String","Float","String","Integer","String"]
-        attribute = ["Datetime","Store Name","Commodity Name","Live Picture","Price","Unit","Quantity","Location"]
+        event = ["TextMessage","TextMessage","TextMessage","TextMessage","TextMessage","TextMessage","LocationMessage"]
+        validate = ["String","String","String","Float","String","Integer","String"]
+        attribute = ["Datetime","Store Name","Commodity Name","Price","Unit","Quantity","Location"]
         current = attribute[self.__redis.hlen(InformationKey)]
         # Validate Data Type
         if self.__ValidateDataType(validate[self.__redis.hlen(InformationKey)]):
