@@ -47,57 +47,11 @@ class ProcessMessage:
         if len(CommentKey) == 0:
             return "No one comment this information"
         else:
-            # contents = []
-            contents = "Comment of #"+Informationid+":"
+            contents = "Comment of #"+Informationid+" Information:"
             for key in CommentKey:
                 comment = self.__redis.get(key)
-                contents = contents + "\n" + comment
+                contents = contents + "\n\n" + comment
             return contents
-            #     content = json.dumps({
-            #             "type": "box",
-            #             "layout": "horizontal",
-            #             "contents": [
-            #               {
-            #                 "type": "text",
-            #                 "text": "%(c)s",
-            #                 "size": "sm",
-            #                 "color": "#555555",
-            #                 "flex": 0,
-            #                 "wrap": "true"
-            #               }
-            #             ]
-            #           }) % {'c':comment}
-            #     contents.append(json.loads(content))
-            #     contents.append({"type": "separator"})
-            # config = {
-            #   "type": "bubble",
-            #   "body": {
-            #     "type": "box",
-            #     "layout": "vertical",
-            #     "contents": [
-            #       {
-            #         "type": "text",
-            #         "text": "评论",
-            #         "weight": "bold",
-            #         "color": "#1DB446",
-            #         "size": "md",
-            #         "margin": "sm"
-            #       },
-            #       {
-            #         "type": "box",
-            #         "layout": "vertical",
-            #         "spacing": "sm",
-            #         "contents": contents,
-            #         "margin": "sm"
-            #       }
-            #     ]
-            #   },
-            #   "styles": {
-            #     "footer": {
-            #     }
-            #   }
-            # }
-            # return config
     def __MyInformation(self):
         InformationKey = self.__redis.keys("Information:" + self.__userid + ":*")
         if len(InformationKey) == 0:
