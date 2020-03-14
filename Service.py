@@ -193,6 +193,9 @@ def handle_ImageMessage(event):
     ImageName = event.source.user_id + str(int(time.time())) + ".jpg"
     for chunk in message_content.iter_content():
         print(chunk)
+    with open("Pictures/"+ImageName, 'wb') as fd:
+        for chunk in message_content.iter_content():
+            fd.write(chunk)
 
     # base64.b64encode(image_data)
 
@@ -220,16 +223,10 @@ def handle_FileMessage(event):
 
 # Handler function for Audio Message
 def handle_AudioMessage(event):
-    if event.message.text.startswith("$"):
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage("TO DO...Written by LI Jinhui")
-        )
-    else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("AudioMessage"))
-        )
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("AudioMessage"))
+    )
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
