@@ -16,7 +16,7 @@ from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
                             StickerSendMessage, TemplateSendMessage,
                             ButtonsTemplate, PostbackAction, LocationMessage,
                             AudioMessage, QuickReplyButton, QuickReply,
-                            BubbleContainer, FlexSendMessage)
+                            BubbleContainer, FlexSendMessage, LocationSendMessage)
 from linebot.utils import PY3
 from ZHY import ProcessMessage
 import json
@@ -237,7 +237,7 @@ def handle_FollowEvent(event):
 # Handler function for Postback Event
 def handle_PostbackEvent(event):
     if event.postback.data == "#Module 1 Tutorial":
-        msg = '''Module 1 Tutorial:
+        msg =TextSendMessage( '''Module 1 Tutorial:
 
 1. Reply '#my' to find the historical store information that you have published;
 
@@ -253,13 +253,13 @@ def handle_PostbackEvent(event):
 
 7. Reply '#rate-ID-SCORE' to rate the credibility of store information;
 
-8. Reply '#exit' to terminate the current procedure.'''
+8. Reply '#exit' to terminate the current procedure.''')
     elif event.postback.data == "#Module 2 Tutorial":
-        msg = '''Module 2 Tutorial:
+        msg = TextSendMessage('''Module 2 Tutorial:
 TO DO...
-Written by WU Peicong'''
+Written by WU Peicong''')
     elif event.postback.data == "#Module 3 Tutorial":
-        msg = '''Module 3 Tutorial:
+        msg = TextSendMessage('''Module 3 Tutorial:
 
 1. Reply '$measurements' to show information stored in the redis;
 
@@ -270,10 +270,18 @@ Written by WU Peicong'''
 4. Reply '$basic measurements' to provide a simple self-test for user.
 
 Important:
-Notice: You should add '$' at the beginning of your query when you want to test on this module. Thanks for cooperation. :)'''
+Notice: You should add '$' at the beginning of your query when you want to test on this module. Thanks for cooperation. :)''')
+    elif event.postback.data.startswith("Location="):
+        print(event.postback.data)
+        msg = LocationSendMessage(
+            title='my location',
+            address='Tokyo',
+            latitude=35.65910807942215,
+            longitude=139.70372892916203
+        )
     else:
-        msg = "Error"
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(msg))
+        msg = TextSendMessage("Error")
+    line_bot_api.reply_message(event.reply_token, msg)
 
 
 # Handler function for Text Message
