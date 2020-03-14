@@ -155,10 +155,21 @@ Written by LI Jinhui'''
 
 # Handler function for Text Message
 def handle_TextMessage(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("TextMessage"))
-    )
+    if event.message.text.startswith("@"):
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage("TO DO... Written by WU Peicong")
+        )
+    elif event.message.text.startswith("$"):
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage("TO DO...Written by LI Jinhui")
+        )
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("TextMessage"))
+        )
 
 # Handler function for Location Message
 def handle_LocationMessage(event):
@@ -208,10 +219,16 @@ def handle_FileMessage(event):
 
 # Handler function for Audio Message
 def handle_AudioMessage(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("AudioMessage"))
-    )
+    if event.message.text.startswith("$"):
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage("TO DO...Written by LI Jinhui")
+        )
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("AudioMessage"))
+        )
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
