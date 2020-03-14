@@ -210,7 +210,7 @@ class ProcessMessage:
                                 "action": {
                                   "type": "postback",
                                   "label": "Location",
-                                  "data": "Location=%(Location)s"
+                                  "data": "%(Location)s"
                                 },
                                 "style": "primary",
                                 "color": "#007BFF",
@@ -245,7 +245,7 @@ class ProcessMessage:
                     'q':dic["Quantity"],
                     't':datetime.datetime.fromtimestamp(float(dic["Datetime"]), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S'),
                     'a':json.loads(dic["Location"])["address"],
-                    'Location':dic["Location"]
+                    'Location':"Address="+str(json.loads(dic["Location"])["address"])+"&Latlng="+str(json.loads(dic["Location"])["latlng"])
                 }
                 contents.append(json.loads(content))
             config = {

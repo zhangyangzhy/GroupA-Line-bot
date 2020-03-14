@@ -271,13 +271,16 @@ Written by WU Peicong''')
 
 Important:
 Notice: You should add '$' at the beginning of your query when you want to test on this module. Thanks for cooperation. :)''')
-    elif event.postback.data.startswith("Location="):
-        print(event.postback.data)
+    elif event.postback.data.startswith("Address="):
+        latlng = event.postback.data.split("&Latlng=")[1]
+        lat = latlng.split(",")[0]
+        lng = latlng.split(",")[1]
+        address = event.postback.data.split("&Latlng=")[0].split("Address=")[1]
         msg = LocationSendMessage(
             title='my location',
-            address='Tokyo',
-            latitude=35.65910807942215,
-            longitude=139.70372892916203
+            address=address,
+            latitude=lat,
+            longitude=lng
         )
     else:
         msg = TextSendMessage("Error")
