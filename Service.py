@@ -191,13 +191,11 @@ def handle_StickerMessage(event):
 def handle_ImageMessage(event):
     message_content = line_bot_api.get_message_content(event.message.id)
     ImageName = event.source.user_id + str(int(time.time())) + ".jpg"
-    for chunk in message_content.iter_content():
-        print(chunk)
-    with open("Pictures/"+ImageName, 'wb') as fd:
+    with open(ImageName, 'wb') as fd:
         for chunk in message_content.iter_content():
             fd.write(chunk)
 
-    # base64.b64encode(image_data)
+        # base64.b64encode(image_data)
 
     # with open("Pictures/"+ImageName, 'wb') as fd:
     #     for chunk in message_content.iter_content():
@@ -225,7 +223,7 @@ def handle_FileMessage(event):
 def handle_AudioMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("AudioMessage"))
+        TextSendMessage("TO DO...Written by LI Jinhui")
     )
 
 if __name__ == "__main__":
