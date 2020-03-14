@@ -1,12 +1,13 @@
 import redis
 import time
+import json
 class Connection:
     def __init__(self):
         self.__host = "redis-16887.c15.us-east-1-4.ec2.cloud.redislabs.com"
         self.__pwd = "xAm8g5NfhvWK6AJstknNJhsFg9M8YuRD"
         self.__port = "16887"
     def connect(self):
-        return redis.Redis(host = self.__host, password = self.__pwd, port = self.__port)
+        return redis.Redis(host = self.__host, password = self.__pwd, port = self.__port, decode_responses=True)
 class ProcessMessage:
     def __init__(self,userid,message):
         self.__userid = userid
@@ -30,683 +31,210 @@ class ProcessMessage:
             return True
         else:
             return False
+    def __GetRate(self,id):
+        InformationKey = self.__redis.keys("Rate:*:" + id)
+        if len(InformationKey) > 0:
+            sum = 0
+            for rate in InformationKey:
+                sum = sum + int(self.__redis.get(rate))
+            return sum/len(InformationKey)
+        return "No rate yet"
     def __MyInformation(self):
-        contents = {
-          "type": "carousel",
-          "contents": [
-            {
-              "type": "bubble",
-              "body": {
-                "type": "box",
-                "layout": "vertical",
-                "spacing": "sm",
-                "contents": [
-                  {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
-                      {
-                        "type": "text",
-                        "text": "香港药店",
-                        "wrap": True,
-                        "weight": "bold",
-                        "size": "xxl"
+        InformationKey = self.__redis.keys("Information:" + self.__userid + ":*")
+        if len(InformationKey) == 0:
+            return "You haven't published information yet"
+        else:
+            contents = []
+            for info in  InformationKey:
+                key = info
+                id = key.split(":")[-1]
+                dic = self.__redis.hgetall(key)
+                content = json.dumps({
+                      "type": "bubble",
+                      "body": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "spacing": "sm",
+                        "contents": [
+                          {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "%(s)s",
+                                "wrap": 1,
+                                "weight": "bold",
+                                "size": "xl"
+                              },
+                              {
+                                "type": "text",
+                                "text": "%(c)s",
+                                "size": "xl"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "Rate",
+                                "wrap": 1,
+                                "weight": "bold",
+                                "size": "lg"
+                              },
+                              {
+                                "type": "text",
+                                "text": "%(r)s",
+                                "size": "lg"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "Price",
+                                "wrap": 1,
+                                "weight": "bold",
+                                "size": "lg"
+                              },
+                              {
+                                "type": "text",
+                                "text": "$%(p)s / %(u)s",
+                                "size": "lg"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "Quantity",
+                                "wrap": 1,
+                                "weight": "bold",
+                                "size": "lg"
+                              },
+                              {
+                                "type": "text",
+                                "text": "%(q)s %(u)s",
+                                "size": "lg"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "%(t)s",
+                                "size": "md"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "contents": [
+                              {
+                                "type": "text",
+                                "text": "%(a)s",
+                                "size": "md"
+                              }
+                            ]
+                          }
+                        ]
                       },
-                      {
-                        "type": "text",
-                        "text": "口罩",
-                        "size": "xxl"
+                      "footer": {
+                        "type": "box",
+                        "layout": "vertical",
+                        "spacing": "sm",
+                        "contents": [
+                          {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "contents": [
+                              {
+                                "type": "button",
+                                "style": "primary",
+                                "action": {
+                                  "type": "postback",
+                                  "label": "Modify",
+                                  "data": "id"
+                                },
+                                "height": "sm"
+                              },
+                              {
+                                "type": "button",
+                                "action": {
+                                  "type": "postback",
+                                  "label": "Delete",
+                                  "data": "id"
+                                },
+                                "style": "primary",
+                                "color": "#DC3545",
+                                "height": "sm"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [
+                              {
+                                "type": "button",
+                                "action": {
+                                  "type": "postback",
+                                  "label": "Location",
+                                  "data": "id"
+                                },
+                                "style": "primary",
+                                "color": "#007BFF",
+                                "height": "sm"
+                              }
+                            ]
+                          },
+                          {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [
+                              {
+                                "type": "button",
+                                "action": {
+                                  "type": "postback",
+                                  "label": "Check Comment",
+                                  "data": "id"
+                                },
+                                "style": "link",
+                                "height": "sm"
+                              }
+                            ]
+                          }
+                        ]
                       }
-                    ]
-                  },
-                  {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                      {
-                        "type": "text",
-                        "text": "Price",
-                        "wrap": True,
-                        "weight": "bold",
-                        "size": "xl"
-                      },
-                      {
-                        "type": "text",
-                        "text": "$12 / 盒",
-                        "size": "xl"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                      {
-                        "type": "text",
-                        "text": "Quantity",
-                        "wrap": True,
-                        "weight": "bold",
-                        "size": "xl"
-                      },
-                      {
-                        "type": "text",
-                        "text": "34 盒",
-                        "size": "xl"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                      {
-                        "type": "text",
-                        "text": "2012/12/30 11:40:89",
-                        "size": "lg"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                      {
-                        "type": "text",
-                        "text": "杨高北路, Pudong Shanghai China",
-                        "size": "lg"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "footer": {
-                "type": "box",
-                "layout": "vertical",
-                "spacing": "sm",
-                "contents": [
-                  {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                      {
-                        "type": "button",
-                        "style": "primary",
-                        "action": {
-                          "type": "postback",
-                          "label": "Modify",
-                          "data": "id"
-                        }
-                      },
-                      {
-                        "type": "button",
-                        "action": {
-                          "type": "postback",
-                          "label": "Delete",
-                          "data": "id"
-                        },
-                        "style": "primary",
-                        "color": "#DC3545"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
-                      {
-                        "type": "button",
-                        "action": {
-                          "type": "postback",
-                          "label": "Location",
-                          "data": "id"
-                        },
-                        "style": "primary",
-                        "color": "#007BFF"
-                      }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-                  "type": "bubble",
-                  "body": {
-                      "type": "box",
-                      "layout": "vertical",
-                      "spacing": "sm",
-                      "contents": [
-                          {
-                              "type": "box",
-                              "layout": "vertical",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "香港药店",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xxl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "口罩",
-                                      "size": "xxl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "Price",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "$12 / 盒",
-                                      "size": "xl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "Quantity",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "34 盒",
-                                      "size": "xl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "2012/12/30 11:40:89",
-                                      "size": "lg"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "杨高北路, Pudong Shanghai China",
-                                      "size": "lg"
-                                  }
-                              ]
-                          }
-                      ]
-                  },
-                  "footer": {
-                      "type": "box",
-                      "layout": "vertical",
-                      "spacing": "sm",
-                      "contents": [
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "button",
-                                      "style": "primary",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Modify",
-                                          "data": "id"
-                                      }
-                                  },
-                                  {
-                                      "type": "button",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Delete",
-                                          "data": "id"
-                                      },
-                                      "style": "primary",
-                                      "color": "#DC3545"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "vertical",
-                              "contents": [
-                                  {
-                                      "type": "button",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Location",
-                                          "data": "id"
-                                      },
-                                      "style": "primary",
-                                      "color": "#007BFF"
-                                  }
-                              ]
-                          }
-                      ]
-                  }
-              },
-            {
-                  "type": "bubble",
-                  "body": {
-                      "type": "box",
-                      "layout": "vertical",
-                      "spacing": "sm",
-                      "contents": [
-                          {
-                              "type": "box",
-                              "layout": "vertical",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "香港药店",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xxl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "口罩",
-                                      "size": "xxl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "Price",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "$12 / 盒",
-                                      "size": "xl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "Quantity",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "34 盒",
-                                      "size": "xl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "2012/12/30 11:40:89",
-                                      "size": "lg"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "杨高北路, Pudong Shanghai China",
-                                      "size": "lg"
-                                  }
-                              ]
-                          }
-                      ]
-                  },
-                  "footer": {
-                      "type": "box",
-                      "layout": "vertical",
-                      "spacing": "sm",
-                      "contents": [
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "button",
-                                      "style": "primary",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Modify",
-                                          "data": "id"
-                                      }
-                                  },
-                                  {
-                                      "type": "button",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Delete",
-                                          "data": "id"
-                                      },
-                                      "style": "primary",
-                                      "color": "#DC3545"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "vertical",
-                              "contents": [
-                                  {
-                                      "type": "button",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Location",
-                                          "data": "id"
-                                      },
-                                      "style": "primary",
-                                      "color": "#007BFF"
-                                  }
-                              ]
-                          }
-                      ]
-                  }
-              },
-            {
-                  "type": "bubble",
-                  "body": {
-                      "type": "box",
-                      "layout": "vertical",
-                      "spacing": "sm",
-                      "contents": [
-                          {
-                              "type": "box",
-                              "layout": "vertical",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "香港药店",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xxl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "口罩",
-                                      "size": "xxl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "Price",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "$12 / 盒",
-                                      "size": "xl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "Quantity",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "34 盒",
-                                      "size": "xl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "2012/12/30 11:40:89",
-                                      "size": "lg"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "杨高北路, Pudong Shanghai China",
-                                      "size": "lg"
-                                  }
-                              ]
-                          }
-                      ]
-                  },
-                  "footer": {
-                      "type": "box",
-                      "layout": "vertical",
-                      "spacing": "sm",
-                      "contents": [
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "button",
-                                      "style": "primary",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Modify",
-                                          "data": "id"
-                                      }
-                                  },
-                                  {
-                                      "type": "button",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Delete",
-                                          "data": "id"
-                                      },
-                                      "style": "primary",
-                                      "color": "#DC3545"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "vertical",
-                              "contents": [
-                                  {
-                                      "type": "button",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Location",
-                                          "data": "id"
-                                      },
-                                      "style": "primary",
-                                      "color": "#007BFF"
-                                  }
-                              ]
-                          }
-                      ]
-                  }
-              },
-            {
-                  "type": "bubble",
-                  "body": {
-                      "type": "box",
-                      "layout": "vertical",
-                      "spacing": "sm",
-                      "contents": [
-                          {
-                              "type": "box",
-                              "layout": "vertical",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "香港药店",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xxl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "口罩",
-                                      "size": "xxl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "Price",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "$12 / 盒",
-                                      "size": "xl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "Quantity",
-                                      "wrap": True,
-                                      "weight": "bold",
-                                      "size": "xl"
-                                  },
-                                  {
-                                      "type": "text",
-                                      "text": "34 盒",
-                                      "size": "xl"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "2012/12/30 11:40:89",
-                                      "size": "lg"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "text",
-                                      "text": "杨高北路, Pudong Shanghai China",
-                                      "size": "lg"
-                                  }
-                              ]
-                          }
-                      ]
-                  },
-                  "footer": {
-                      "type": "box",
-                      "layout": "vertical",
-                      "spacing": "sm",
-                      "contents": [
-                          {
-                              "type": "box",
-                              "layout": "horizontal",
-                              "contents": [
-                                  {
-                                      "type": "button",
-                                      "style": "primary",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Modify",
-                                          "data": "id"
-                                      }
-                                  },
-                                  {
-                                      "type": "button",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Delete",
-                                          "data": "id"
-                                      },
-                                      "style": "primary",
-                                      "color": "#DC3545"
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "box",
-                              "layout": "vertical",
-                              "contents": [
-                                  {
-                                      "type": "button",
-                                      "action": {
-                                          "type": "postback",
-                                          "label": "Location",
-                                          "data": "id"
-                                      },
-                                      "style": "primary",
-                                      "color": "#007BFF"
-                                  }
-                              ]
-                          }
-                      ]
-                  }
-              },
-          ]
-        }
-        return contents
+                    }) % {'s':dic["Store Name"],
+                    'c':dic["Commodity Name"],
+                    'r': self.__GetRate(id),
+                    'p':dic["Price"],
+                    'u':dic["Unit"],
+                    'q':dic["Quantity"],
+                    't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int(dic["Datetime"]))),
+                    'a':json.loads(dic["Location"])["address"]
+                }
+                print(content)
+                contents.append(json.loads(content))
+            config = {
+              "type": "carousel",
+              "contents": contents
+            }
+            return config
     def __PublishInformation(self):
         ActionKey = "Action:" + self.__userid
         InformationKey = "TempInformation:" + self.__userid
@@ -747,7 +275,7 @@ class ProcessMessage:
         InformationKey = self.__redis.keys("Information:*:" + informationID)
         if len(InformationKey) != 1:
             return "No such record ID, please reply again"
-        UserID = InformationKey[0].decode().split(":")[1]
+        UserID = InformationKey[0].split(":")[1]
         if UserID == self.__userid:
             return "Can't comment your own record, please reply again"
         CommentKey = "Comment:" + self.__userid + ":" + informationID
@@ -760,14 +288,14 @@ class ProcessMessage:
         InformationKey = self.__redis.keys("Information:*:" + informationID)
         if len(InformationKey) != 1:
             return "No such record ID, please reply again"
-        UserID = InformationKey[0].decode().split(":")[1]
+        UserID = InformationKey[0].split(":")[1]
         if UserID == self.__userid:
             return "Can't rate your own record, please reply again"
         # Validate Data Type
         try:
             int(rate)
-            if int(rate) < 0 or int(rate) > 5:
-                return "Range should from 0 to 5, please reply again"
+            if int(rate) < 0 or int(rate) > 100:
+                return "Range should from 0 to 100, please reply again"
             RateKey = "Rate:" + self.__userid + ":" + informationID
             self.__redis.set(RateKey, rate)
             return "Rate successfully"
@@ -803,20 +331,20 @@ class ProcessMessage:
         elif self.__message == "#exit":
             return self.__Exit()
         else:
-            if self.__redis.get(key) == b"#publish":
+            if self.__redis.get(key) == "#publish":
                 return self.__PublishInformation()
-            elif self.__redis.get(key) == b"#search":
+            elif self.__redis.get(key) == "#search":
                 return self.__SearchInformation()
-            elif self.__redis.get(key) == b"#delete":
+            elif self.__redis.get(key) == "#delete":
                 return self.__DeleteInformation()
-            elif self.__redis.get(key) == b"#modify":
+            elif self.__redis.get(key) == "#modify":
                 return self.__ModifyInformation()
             else:
                 return "Error!"
     def public(self,EventType):
         key = "NextEvent:" + self.__userid
         if self.__redis.exists(key):
-            value = self.__redis.get(key).decode()
+            value = self.__redis.get(key)
             if self.__message == "#exit":
                 return self.__Exit()
             if EventType != value:
