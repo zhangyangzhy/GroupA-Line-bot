@@ -283,15 +283,20 @@ def handle_TextMessage(event):
         global flag
         global test_x, test_y, test_z
         if event.message.text == "$basic measurements":
-            flag += 1
-            basic_measure(event)
+            if flag == 4:
+                flag = 1
+                basic_measure(event)
+            else:
+                flag += 1
+                basic_measure(event)
         else:
             if flag == 0:
                 handle_Text(event)
             else:
                 if flag == 4:
                     # end of the test, reset the global variables
-                    flag, test_x, test_y, test_z = 0, 0, 0, 0
+                    flag = 0
+                    test_x, test_y, test_z = 0, 0, 0
                 else:
                     flag += 1
                     basic_measure(event)
