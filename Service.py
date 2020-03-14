@@ -15,7 +15,7 @@ from linebot.exceptions import (
 )
 
 from linebot.models import (
-    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction, LocationMessage, AudioMessage, QuickReplyButton, QuickReply
+    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction, LocationMessage, AudioMessage, QuickReplyButton, QuickReply, BubbleContainer, FlexSendMessage
 )
 from linebot.utils import PY3
 from ZHY import ProcessMessage
@@ -167,24 +167,33 @@ def handle_TextMessage(event):
         )
     else:
         message = ProcessMessage(event.source.user_id, event.message.text).public("TextMessage")
-        if message == "Error!":
+        if isinstance(message,dict):
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='Please input action first (you can refer the quick reply button)',
-                                quick_reply=QuickReply(items=[
-                                    QuickReplyButton(
-                                        action=PostbackAction(label='Publish & Search', data='#Module 1 Tutorial')),
-                                    QuickReplyButton(
-                                        action=PostbackAction(label='News Summaries', data='#Module 2 Tutorial')),
-                                    QuickReplyButton(
-                                        action=PostbackAction(label='Anti-Coronavirus', data='#Module 3 Tutorial'))
-                                ]))
+                FlexSendMessage(
+                    alt_text='test',
+                    contents=message
+                )
             )
         else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(message)
-            )
+            if message == "Error!":
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text='Please input action first (you can refer the quick reply button)',
+                                    quick_reply=QuickReply(items=[
+                                        QuickReplyButton(
+                                            action=PostbackAction(label='Publish & Search', data='#Module 1 Tutorial')),
+                                        QuickReplyButton(
+                                            action=PostbackAction(label='News Summaries', data='#Module 2 Tutorial')),
+                                        QuickReplyButton(
+                                            action=PostbackAction(label='Anti-Coronavirus', data='#Module 3 Tutorial'))
+                                    ]))
+                )
+            else:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(message)
+                )
 
 
 # Handler function for Location Message
