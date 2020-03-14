@@ -172,35 +172,35 @@ def handle_LocationMessage(event):
 def handle_StickerMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("StickerMessage"))
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("StickerMessage"))
     )
 
 # Handler function for Image Message
 def handle_ImageMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("ImageMessage"))
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("ImageMessage"))
     )
 
 # Handler function for Video Message
 def handle_VideoMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("VideoMessage"))
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("VideoMessage"))
     )
 
 # Handler function for File Message
 def handle_FileMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("FileMessage"))
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("FileMessage"))
     )
 
 # Handler function for Audio Message
 def handle_AudioMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("AudioMessage"))
+        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("AudioMessage"))
     )
 
 if __name__ == "__main__":
