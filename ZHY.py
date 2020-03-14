@@ -110,7 +110,7 @@ class ProcessMessage:
             elif self.__redis.get(key) == b"#Modify Information":
                 return self.__ModifyInformation()
             else:
-                return "Please input action first (last procedure maybe end)"
+                return "Error"
     def public(self,EventType):
         key = "NextEvent:" + self.__userid
         if self.__redis.exists(key):

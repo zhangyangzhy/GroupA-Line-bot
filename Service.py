@@ -166,19 +166,25 @@ def handle_TextMessage(event):
             TextSendMessage("TO DO...Written by LI Jinhui")
         )
     else:
-        # line_bot_api.reply_message(
-        #     event.reply_token,
-        #     TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("TextMessage"))
-        # )
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='Hello, world',
-                            quick_reply=QuickReply(items=[
-                                QuickReplyButton(action= PostbackAction(label='Publish & Search', data='#Module 1 Tutorial')),
-                                QuickReplyButton(action=PostbackAction(label='News Summaries', data='#Module 2 Tutorial')),
-                                QuickReplyButton(action=PostbackAction(label='Anti-Coronavirus', data='#Module 3 Tutorial'))
-                            ]))
-        )
+        if ProcessMessage(event.source.user_id, event.message.text).public("TextMessage") == "Error":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='Please input action first (you can refers the quick reply button)',
+                                quick_reply=QuickReply(items=[
+                                    QuickReplyButton(
+                                        action=PostbackAction(label='Publish & Search', data='#Module 1 Tutorial')),
+                                    QuickReplyButton(
+                                        action=PostbackAction(label='News Summaries', data='#Module 2 Tutorial')),
+                                    QuickReplyButton(
+                                        action=PostbackAction(label='Anti-Coronavirus', data='#Module 3 Tutorial'))
+                                ]))
+            )
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(ProcessMessage(event.source.user_id, event.message.text).public("TextMessage"))
+            )
+
 
 # Handler function for Location Message
 def handle_LocationMessage(event):
