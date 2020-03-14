@@ -191,7 +191,8 @@ def handle_StickerMessage(event):
 def handle_ImageMessage(event):
     message_content = line_bot_api.get_message_content(event.message.id)
     ImageName = event.source.user_id + str(int(time.time())) + ".jpg"
-    print(message_content)
+    for chunk in message_content.iter_content():
+        print(chunk)
 
     # base64.b64encode(image_data)
 
