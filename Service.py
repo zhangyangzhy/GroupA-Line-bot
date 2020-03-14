@@ -20,6 +20,7 @@ from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
 from linebot.utils import PY3
 from ZHY import ProcessMessage
 import json
+from urllib import parse
 
 
 app = Flask(__name__)
@@ -272,15 +273,12 @@ Written by WU Peicong''')
 Important:
 Notice: You should add '$' at the beginning of your query when you want to test on this module. Thanks for cooperation. :)''')
     elif event.postback.data.startswith("Address="):
-        latlng = event.postback.data.split("&Latlng=")[1]
-        lat = latlng.split(",")[0]
-        lng = latlng.split(",")[1]
-        address = event.postback.data.split("&Latlng=")[0].split("Address=")[1]
+        params = parse.parse_qs(event.postback.data)
         msg = LocationSendMessage(
-            title='my location',
-            address=address,
-            latitude=lat,
-            longitude=lng
+            title=params["Title"],
+            address=params["Address"],
+            latitude=params["Lat"],
+            longitude=params["Lng"]
         )
     else:
         msg = TextSendMessage("Error")

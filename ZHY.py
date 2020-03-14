@@ -51,6 +51,9 @@ class ProcessMessage:
                 key = info
                 id = key.split(":")[-1]
                 dic = self.__redis.hgetall(key)
+                LatLng = json.loads(dic["Location"])["latlng"].split(",")
+                lat = LatLng[0]
+                lng = LatLng[1]
                 content = json.dumps({
                       "type": "bubble",
                       "body": {
@@ -245,7 +248,7 @@ class ProcessMessage:
                     'q':dic["Quantity"],
                     't':datetime.datetime.fromtimestamp(float(dic["Datetime"]), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S'),
                     'a':json.loads(dic["Location"])["address"],
-                    'Location':"Address="+str(json.loads(dic["Location"])["address"])+"&Latlng="+str(json.loads(dic["Location"])["latlng"])
+                    'Location':"Address="+str(json.loads(dic["Location"])["address"])+"&Lat="+str(lat)+"&Lng="+str(lng)+"&Title="+str(dic["Store Name"])
                 }
                 contents.append(json.loads(content))
             config = {
