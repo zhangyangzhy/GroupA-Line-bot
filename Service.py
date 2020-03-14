@@ -7,16 +7,16 @@ import redis
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
-from linebot import (
-    LineBotApi, WebhookParser
-)
-from linebot.exceptions import (
-    InvalidSignatureError
-)
+from linebot import (LineBotApi, WebhookParser)
+from linebot.exceptions import (InvalidSignatureError)
 
-from linebot.models import (
-    FollowEvent, PostbackEvent, MessageEvent, TextMessage, TextSendMessage, ImageMessage, VideoMessage, FileMessage, StickerMessage, StickerSendMessage, TemplateSendMessage, ButtonsTemplate, PostbackAction, LocationMessage, AudioMessage, QuickReplyButton, QuickReply, BubbleContainer, FlexSendMessage
-)
+from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
+                            TextMessage, TextSendMessage, ImageMessage,
+                            VideoMessage, FileMessage, StickerMessage,
+                            StickerSendMessage, TemplateSendMessage,
+                            ButtonsTemplate, PostbackAction, LocationMessage,
+                            AudioMessage, QuickReplyButton, QuickReply,
+                            BubbleContainer, FlexSendMessage)
 from linebot.utils import PY3
 from ZHY import ProcessMessage
 import json
@@ -63,9 +63,9 @@ def callback():
 
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
-        if isinstance(event,FollowEvent):
+        if isinstance(event, FollowEvent):
             handle_FollowEvent(event)
-        if isinstance(event,PostbackEvent):
+        if isinstance(event, PostbackEvent):
             handle_PostbackEvent(event)
         if not isinstance(event, MessageEvent):
             continue
@@ -91,32 +91,27 @@ def callback():
 
     return 'OK'
 
+
 # Handler function for Follow Event
 def handle_FollowEvent(event):
     button_template_message = ButtonsTemplate(
-        thumbnail_image_url="https://obs.line-scdn.net/0h_TFUioZ5AHt7LCh0KO1_LFpxCxlITh5wWUpIGVwkXE1RHEBDExhPHg0sWhwBT0AuT0gbHjAsVh5XFUQrQA9OTg4pV09fGw/f256x256",
+        thumbnail_image_url=
+        "https://obs.line-scdn.net/0h_TFUioZ5AHt7LCh0KO1_LFpxCxlITh5wWUpIGVwkXE1RHEBDExhPHg0sWhwBT0AuT0gbHjAsVh5XFUQrQA9OTg4pV09fGw/f256x256",
         title='Module List',
         text='Welcome to follow, click one to get the module tutorial:',
         image_size="contain",
         actions=[
-            PostbackAction(
-                label='Publish & Search', data='#Module 1 Tutorial'
-            ),
-            PostbackAction(
-                label='News Summaries', data='#Module 2 Tutorial'
-            ),
-            PostbackAction(
-                label='Anti-Coronavirus', data='#Module 3 Tutorial'
-            ),
-        ]
-    )
+            PostbackAction(label='Publish & Search',
+                           data='#Module 1 Tutorial'),
+            PostbackAction(label='News Summaries', data='#Module 2 Tutorial'),
+            PostbackAction(label='Anti-Coronavirus',
+                           data='#Module 3 Tutorial'),
+        ])
     line_bot_api.reply_message(
         event.reply_token,
-        TemplateSendMessage(
-            alt_text="Follow Event",
-            template=button_template_message
-        )
-    )
+        TemplateSendMessage(alt_text="Follow Event",
+                            template=button_template_message))
+
 
 # Handler function for Postback Event
 def handle_PostbackEvent(event):
@@ -144,106 +139,117 @@ TO DO...
 Written by WU Peicong'''
     elif event.postback.data == "#Module 3 Tutorial":
         msg = '''Module 3 Tutorial:
-TO DO...
-Written by LI Jinhui'''
+1. Reply '$measurements' to show information stored in the redis;
+
+2. Reply '$symptoms' to return relative record;
+
+3. Reply '$coronavirus' to find the record in the redis;
+
+4. Reply '$basic measurements' to provide a simple self-test for user.'''
     else:
         msg = "Error"
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(msg)
-    )
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(msg))
+
 
 # Handler function for Text Message
 def handle_TextMessage(event):
     if event.message.text.startswith("@"):
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage("TO DO... Written by WU Peicong")
-        )
+            TextSendMessage("TO DO... Written by WU Peicong"))
     elif event.message.text.startswith("$"):
         line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage("TO DO...Written by LI Jinhui")
-        )
+            event.reply_token, TextSendMessage("TO DO...Written by LI Jinhui"))
     else:
-        message = ProcessMessage(event.source.user_id, event.message.text).public("TextMessage")
-        if isinstance(message,dict):
+        message = ProcessMessage(event.source.user_id,
+                                 event.message.text).public("TextMessage")
+        if isinstance(message, dict):
             line_bot_api.reply_message(
                 event.reply_token,
-                FlexSendMessage(
-                    alt_text='test',
-                    contents=message
-                )
-            )
+                FlexSendMessage(alt_text='test', contents=message))
         else:
             if message == "Error!":
                 line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text='Please input action first (you can refer the quick reply button)',
-                                    quick_reply=QuickReply(items=[
-                                        QuickReplyButton(
-                                            action=PostbackAction(label='Publish & Search', data='#Module 1 Tutorial')),
-                                        QuickReplyButton(
-                                            action=PostbackAction(label='News Summaries', data='#Module 2 Tutorial')),
-                                        QuickReplyButton(
-                                            action=PostbackAction(label='Anti-Coronavirus', data='#Module 3 Tutorial'))
-                                    ]))
-                )
+                    TextSendMessage(
+                        text=
+                        'Please input action first (you can refer the quick reply button)',
+                        quick_reply=QuickReply(items=[
+                            QuickReplyButton(action=PostbackAction(
+                                label='Publish & Search',
+                                data='#Module 1 Tutorial')),
+                            QuickReplyButton(action=PostbackAction(
+                                label='News Summaries',
+                                data='#Module 2 Tutorial')),
+                            QuickReplyButton(action=PostbackAction(
+                                label='Anti-Coronavirus',
+                                data='#Module 3 Tutorial'))
+                        ])))
             else:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(message)
-                )
+                line_bot_api.reply_message(event.reply_token,
+                                           TextSendMessage(message))
 
 
 # Handler function for Location Message
 def handle_LocationMessage(event):
-    dic = {"latlng": str(event.message.latitude) + "," + str(event.message.longitude),"address":event.message.address}
+    dic = {
+        "latlng":
+        str(event.message.latitude) + "," + str(event.message.longitude),
+        "address": event.message.address
+    }
     text = json.dumps(dic)
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, text).public("LocationMessage"))
-    )
+        TextSendMessage(
+            ProcessMessage(event.source.user_id,
+                           text).public("LocationMessage")))
+
 
 # Handler function for Sticker Message
 def handle_StickerMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("StickerMessage"))
-    )
+        TextSendMessage(
+            ProcessMessage(event.source.user_id,
+                           event.message.id).public("StickerMessage")))
+
 
 # Handler function for Image Message
 def handle_ImageMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("ImageMessage"))
-    )
+        TextSendMessage(
+            ProcessMessage(event.source.user_id,
+                           event.message.id).public("ImageMessage")))
+
 
 # Handler function for Video Message
 def handle_VideoMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("VideoMessage"))
-    )
+        TextSendMessage(
+            ProcessMessage(event.source.user_id,
+                           event.message.id).public("VideoMessage")))
+
 
 # Handler function for File Message
 def handle_FileMessage(event):
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("FileMessage"))
-    )
+        TextSendMessage(
+            ProcessMessage(event.source.user_id,
+                           event.message.id).public("FileMessage")))
+
 
 # Handler function for Audio Message
 def handle_AudioMessage(event):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage("TO DO...Written by LI Jinhui")
-    )
+    line_bot_api.reply_message(event.reply_token,
+                               TextSendMessage("TO DO...Written by LI Jinhui"))
+
 
 if __name__ == "__main__":
-    arg_parser = ArgumentParser(
-        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
-    )
+    arg_parser = ArgumentParser(usage='Usage: python ' + __file__ +
+                                ' [--port <port>] [--help]')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
