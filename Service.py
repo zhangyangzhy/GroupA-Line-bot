@@ -170,7 +170,7 @@ def handle_TextMessage(event):
         if message == "Error!":
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text='Please input action first (you can refers the quick reply button)',
+                TextSendMessage(text='Please input action first (you can refer the quick reply button)',
                                 quick_reply=QuickReply(items=[
                                     QuickReplyButton(
                                         action=PostbackAction(label='Publish & Search', data='#Module 1 Tutorial')),

@@ -79,7 +79,25 @@ class ProcessMessage:
         self.__redis.set(CommentKey, comment)
         return "Comment successfully"
     def __Rate(self):
-        return
+        message = self.__message.split("-", 2)
+        informationID = message[1]
+        rate = message[2]
+        InformationKey = self.__redis.keys("Information:*:" + informationID)
+        if len(InformationKey) != 1:
+            return "No such record ID, please reply again"
+        UserID = InformationKey[0].decode().split(":")[1]
+        if UserID == self.__userid:
+            return "Can't rate your own record, please reply again"
+        # Validate Data Type
+        try:
+            int(rate)
+            if int(rate) < 0 or int(rate) > 100:
+                return "Range should from 0 to 100, please reply again"
+            RateKey = "Rate:" + self.__userid + ":" + informationID
+            self.__redis.set(RateKey, rate)
+            return "Rate successfully"
+        except ValueError:
+            return "Data type error, need Integer, please reply again"
     def __Exit(self):
         self.__redis.delete("Action:"+self.__userid)
         self.__redis.delete("TempInformation:" + self.__userid)
@@ -106,7 +124,6 @@ class ProcessMessage:
         elif self.__message.startswith("#comment-"):
             return self.__Comment()
         elif self.__message.startswith("#rate-"):
-            self.__redis.set(key, "#rate", ex=self.__expire)
             return self.__Rate()
         elif self.__message == "#exit":
             return self.__Exit()
