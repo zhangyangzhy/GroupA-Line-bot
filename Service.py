@@ -20,6 +20,7 @@ from linebot.models import (
 from linebot.utils import PY3
 from ZHY import ProcessMessage
 import json
+import time
 
 app = Flask(__name__)
 
@@ -177,9 +178,18 @@ def handle_StickerMessage(event):
 
 # Handler function for Image Message
 def handle_ImageMessage(event):
+    message_content = line_bot_api.get_message_content(event.message.id)
+    ImageName = event.source.user_id + str(int(time.time())) + ".jpg"
+    print(message_content)
+
+    # base64.b64encode(image_data)
+
+    # with open("Pictures/"+ImageName, 'wb') as fd:
+    #     for chunk in message_content.iter_content():
+    #         fd.write(chunk)
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(ProcessMessage(event.source.user_id, event.message.id).public("ImageMessage"))
+        TextSendMessage(ProcessMessage(ImageName, event.message.id).public("ImageMessage"))
     )
 
 # Handler function for Video Message
