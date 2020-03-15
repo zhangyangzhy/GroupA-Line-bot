@@ -64,10 +64,13 @@ class ProcessMessage:
             return "You haven't published information yet, try to reply #publish"
         else:
             contents = []
-            for info in  InformationKey:
-                key = info
-                id = key.split(":")[-1]
-                dic = self.__redis.hgetall(key)
+            dics = []
+            for i in InformationKey:
+                dic = self.__redis.hgetall(i)
+                dic["id"] = i.split(":")[-1]
+                dics.append(dic)
+            NewDics = sorted(dics, key=lambda k: k['Datetime'], reverse=True)
+            for dic in  NewDics:
                 LatLng = json.loads(dic["Location"])["latlng"].split(",")
                 lat = LatLng[0]
                 lng = LatLng[1]
@@ -239,15 +242,15 @@ class ProcessMessage:
                       }
                     }) % {'s':dic["Store Name"],
                     'c':dic["Commodity Name"],
-                    'i':id,
-                    'r': self.__GetRate(id),
+                    'i':dic["id"],
+                    'r': self.__GetRate(dic["id"]),
                     'p':dic["Price"],
                     'u':dic["Unit"],
                     'q':dic["Quantity"],
                     't':datetime.datetime.fromtimestamp(float(dic["Datetime"]), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S'),
                     'a':json.loads(dic["Location"])["address"],
                     'Location':"Address="+str(json.loads(dic["Location"])["address"])+"&Lat="+str(lat)+"&Lng="+str(lng)+"&Title="+str(dic["Store Name"]),
-                    'Comment':"GetComment="+id
+                    'Comment':"GetComment="+dic["id"]
                 }
                 contents.append(json.loads(content))
             config = {
@@ -354,14 +357,12 @@ class ProcessMessage:
             if len(InformationKey) == 0:
                 return "No information record in database yet"
             contents = []
-
             dics = []
             for i in InformationKey:
                 dic = self.__redis.hgetall(i)
                 dic["id"] = i.split(":")[-1]
                 dics.append(dic)
             NewDics = sorted(dics, key=lambda k: k['Datetime'], reverse=True)
-
             for dic in NewDics:
                 LatLng2 = json.loads(dic["Location"])["latlng"]
                 distance = geodesic((LatLng1), (LatLng2)).km
