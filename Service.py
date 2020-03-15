@@ -199,18 +199,26 @@ def handle_Text(event):
     '''
     print(event.message.text)
     msg = event.message.text
-    ls = str(msg).lower().split(" ")
+    ls = str(msg).lower().strip().split(" ")
     print(ls)
-    for i in ls:
-        print(i)
+    for i in range(len(ls)):
+        print(ls[i])
         # if the key does not exist, return None.
-        value = str(r_li.get(i))[2:-1]
-        if value == "None":
-            continue
-        else:
+        value = str(r_li.get(ls[i]))
+        if value != "None":
+            value = str(r_li.get(ls[i]))[2:-1]
             print(value)
             line_bot_api.reply_message(event.reply_token,
                                        TextSendMessage(value))
+
+        # skip the word if iteration is not touch the len(ls)
+        elif value == "None" and i + 1 < len(ls):
+            continue
+        # return 'not found' when searched whole sentence with nothing.
+        elif value == "None" and i + 1 == len(ls):
+            war_msg = "Try to find your query, but nothing return. You can try to input '$coronavirus', '$symptoms', '$measurements' or '$basic measurements' for query. :)"
+            line_bot_api.reply_message(event.reply_token,
+                                       TextSendMessage(war_msg))
 
 
 # Handler function for Follow Event
