@@ -321,7 +321,8 @@ Notice: You should add '$' at the beginning of your query when you want to test 
     elif str(event.postback.data).startswith("Modify="):
         params = parse.parse_qs(event.postback.data)
         id = params["Modify"][0]
-        msg = TextSendMessage("Modify")
+        message = ProcessMessage(event.source.user_id, id).public("ModifyInformation")
+        msg = TextSendMessage(message)
     else:
         msg = TextSendMessage("Error")
     line_bot_api.reply_message(event.reply_token, msg)
