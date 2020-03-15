@@ -2,3 +2,4 @@ flask
 redis
 line-bot-sdk
 pytz
+geopy
