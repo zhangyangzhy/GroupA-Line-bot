@@ -1,5 +1,7 @@
 import redis
 import time
+import datetime
+import pytz
 import json
 class Connection:
     def __init__(self):
@@ -39,16 +41,34 @@ class ProcessMessage:
                 sum = sum + int(self.__redis.get(rate))
             return sum/len(InformationKey)
         return "No rate yet"
+    def __GetComment(self):
+        Informationid = self.__message
+        CommentKey = self.__redis.keys("Comment:*:" + Informationid)
+        if len(CommentKey) == 0:
+            InformationKey = self.__redis.keys("Information:*:" + Informationid)
+            if len(InformationKey) == 0:
+                return "Not available because information has been deleted"
+            else:
+                return "No one comments this information"
+        else:
+            contents = "Comment of #"+Informationid+" Information:"
+            for key in CommentKey:
+                comment = self.__redis.get(key)
+                contents = contents + "\n\n" + comment
+            return contents
     def __MyInformation(self):
         InformationKey = self.__redis.keys("Information:" + self.__userid + ":*")
         if len(InformationKey) == 0:
-            return "You haven't published information yet"
+            return "You haven't published information yet, try to reply #publish"
         else:
             contents = []
             for info in  InformationKey:
                 key = info
                 id = key.split(":")[-1]
                 dic = self.__redis.hgetall(key)
+                LatLng = json.loads(dic["Location"])["latlng"].split(",")
+                lat = LatLng[0]
+                lng = LatLng[1]
                 content = json.dumps({
                       "type": "bubble",
                       "body": {
@@ -182,7 +202,7 @@ class ProcessMessage:
                                 "action": {
                                   "type": "postback",
                                   "label": "Modify",
-                                  "data": "id"
+                                  "data": "Modify=%(i)s&Step=1"
                                 },
                                 "height": "sm"
                               },
@@ -191,7 +211,7 @@ class ProcessMessage:
                                 "action": {
                                   "type": "postback",
                                   "label": "Delete",
-                                  "data": "id"
+                                  "data": "Delete=%(i)s&Step=1"
                                 },
                                 "style": "primary",
                                 "color": "#DC3545",
@@ -207,8 +227,8 @@ class ProcessMessage:
                                 "type": "button",
                                 "action": {
                                   "type": "postback",
-                                  "label": "Location",
-                                  "data": "id"
+                                  "label": "Get Location",
+                                  "data": "%(Location)s"
                                 },
                                 "style": "primary",
                                 "color": "#007BFF",
@@ -225,7 +245,7 @@ class ProcessMessage:
                                 "action": {
                                   "type": "postback",
                                   "label": "Check Comment",
-                                  "data": "id"
+                                  "data": "%(Comment)s"
                                 },
                                 "style": "link",
                                 "height": "sm"
@@ -241,14 +261,12 @@ class ProcessMessage:
                     'p':dic["Price"],
                     'u':dic["Unit"],
                     'q':dic["Quantity"],
-                    # 't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(dic["Datetime"]))),
-                    't':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float("1584197771.3533754"))),
-                    'a':json.loads(dic["Location"])["address"]
+                    't':datetime.datetime.fromtimestamp(float(dic["Datetime"]), pytz.timezone('Asia/Shanghai')).strftime('%Y-%m-%d %H:%M:%S'),
+                    'a':json.loads(dic["Location"])["address"],
+                    'Location':"Address="+str(json.loads(dic["Location"])["address"])+"&Lat="+str(lat)+"&Lng="+str(lng)+"&Title="+str(dic["Store Name"]),
+                    'Comment':"GetComment="+id
                 }
                 contents.append(json.loads(content))
-                print(type(dic["Datetime"]))
-                print(dic["Datetime"])
-                print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(dic["Datetime"]))))
             config = {
               "type": "carousel",
               "contents": contents
@@ -282,7 +300,14 @@ class ProcessMessage:
                 return "Please reply the " + next + " (" + event[self.__redis.hlen(InformationKey)] + "):"
         return "Data type error, need " + validate[self.__redis.hlen(InformationKey)] + ", please reply again"
     def __DeleteInformation(self):
-        return
+        InformationId = self.__message
+        UserId = self.__userid
+        key = "Information:"+UserId+":"+InformationId
+        if self.__redis.exists(key):
+            self.__redis.delete(key)
+            return "Delete successfully"
+        else:
+            return "Fail to delete, this information has been deleted before"
     def __ModifyInformation(self):
         return
     def __SearchInformation(self):
@@ -349,9 +374,6 @@ class ProcessMessage:
         elif self.__message == "#search":
             self.__redis.set(key, "#search", ex=self.__expire)
             return self.__SearchInformation()
-        elif self.__message.startswith("#delete-"):
-            self.__redis.set(key, "#delete", ex=self.__expire)
-            return self.__DeleteInformation()
         elif self.__message.startswith("#modify-"):
             self.__redis.set(key, "#modify", ex=self.__expire)
             return self.__ModifyInformation()
@@ -366,13 +388,15 @@ class ProcessMessage:
                 return self.__PublishInformation()
             elif self.__redis.get(key) == "#search":
                 return self.__SearchInformation()
-            elif self.__redis.get(key) == "#delete":
-                return self.__DeleteInformation()
             elif self.__redis.get(key) == "#modify":
                 return self.__ModifyInformation()
             else:
                 return "Error!"
     def public(self,EventType):
+        if EventType == "DeleteInformation":
+            return self.__DeleteInformation()
+        if EventType == "GetComment":
+            return self.__GetComment()
         key = "NextEvent:" + self.__userid
         if self.__redis.exists(key):
             value = self.__redis.get(key)
