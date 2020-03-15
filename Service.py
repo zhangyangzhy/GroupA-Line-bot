@@ -16,7 +16,7 @@ from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
                             StickerSendMessage, TemplateSendMessage,
                             ButtonsTemplate, PostbackAction, LocationMessage,
                             AudioMessage, QuickReplyButton, QuickReply,
-                            BubbleContainer, FlexSendMessage, LocationSendMessage)
+                            BubbleContainer, FlexSendMessage, LocationSendMessage,ConfirmTemplate,MessageAction)
 from linebot.utils import PY3
 from ZHY import ProcessMessage
 import json
@@ -246,15 +246,13 @@ def handle_PostbackEvent(event):
 
 3. Reply '#search' to query the records within 10KM of your current location;
 
-4. Reply '#delete-ID' to delete the specific record you have published permanently;
+4. Reply '#modify-ID' to modify the attribute value;
 
-5. Reply '#modify-ID' to modify the attribute value;
+5. Reply '#comment-ID-CONTENT' to comment on store information that is not published by yourself;
 
-6. Reply '#comment-ID-CONTENT' to comment on store information that is not published by yourself;
+6. Reply '#rate-ID-SCORE' to rate the credibility of store information;
 
-7. Reply '#rate-ID-SCORE' to rate the credibility of store information;
-
-8. Reply '#exit' to terminate the current procedure.''')
+7. Reply '#exit' to terminate the current procedure.''')
     elif event.postback.data == "#Module 2 Tutorial":
         msg = TextSendMessage('''Module 2 Tutorial:
 TO DO...
@@ -284,6 +282,32 @@ Notice: You should add '$' at the beginning of your query when you want to test 
         params = parse.parse_qs(event.postback.data)
         message = ProcessMessage(event.source.user_id,params["GetComment"][0]).public("GetComment")
         msg = TextSendMessage(message)
+    elif event.postback.data.startswith("Delete="):
+        params = parse.parse_qs(event.postback.data)
+        id = params["Delete"][0]
+        step = params["Step"][0]
+        if step == 1:
+            msg = TemplateSendMessage(
+                alt_text='Confirm template',
+                template=ConfirmTemplate(
+                    text='Are you sure to delete?',
+                    actions=[
+                        PostbackAction(
+                            label='Yes',
+                            data='Delete='+id+'&Step=2'
+                        ),
+                        MessageAction(
+                            label='No',
+                            text='Cancel successfully'
+                        )
+                    ]
+                )
+            )
+        else:
+            message = ProcessMessage(event.source.user_id, id).public("DeleteInformation")
+            msg = TextSendMessage(message)
+    elif event.postback.data.startswith("Modify="):
+        msg = TextSendMessage("Modify")
     else:
         msg = TextSendMessage("Error")
     line_bot_api.reply_message(event.reply_token, msg)

@@ -198,7 +198,7 @@ class ProcessMessage:
                                 "action": {
                                   "type": "postback",
                                   "label": "Modify",
-                                  "data": "id"
+                                  "data": "Modify=%(i)s&Step=1"
                                 },
                                 "height": "sm"
                               },
@@ -207,7 +207,7 @@ class ProcessMessage:
                                 "action": {
                                   "type": "postback",
                                   "label": "Delete",
-                                  "data": "id"
+                                  "data": "Delete=%(i)s&Step=1"
                                 },
                                 "style": "primary",
                                 "color": "#DC3545",
@@ -296,7 +296,14 @@ class ProcessMessage:
                 return "Please reply the " + next + " (" + event[self.__redis.hlen(InformationKey)] + "):"
         return "Data type error, need " + validate[self.__redis.hlen(InformationKey)] + ", please reply again"
     def __DeleteInformation(self):
-        return
+        InformationId = self.__message
+        UserId = self.__userid
+        key = "Information:"+UserId+":"+InformationId
+        if self.__redis.exists(key):
+            self.__redis.delete(key)
+            return "Delete successfully"
+        else:
+            return "Fail to delete, please get information again"
     def __ModifyInformation(self):
         return
     def __SearchInformation(self):
@@ -363,9 +370,6 @@ class ProcessMessage:
         elif self.__message == "#search":
             self.__redis.set(key, "#search", ex=self.__expire)
             return self.__SearchInformation()
-        elif self.__message.startswith("#delete-"):
-            self.__redis.set(key, "#delete", ex=self.__expire)
-            return self.__DeleteInformation()
         elif self.__message.startswith("#modify-"):
             self.__redis.set(key, "#modify", ex=self.__expire)
             return self.__ModifyInformation()
@@ -380,13 +384,13 @@ class ProcessMessage:
                 return self.__PublishInformation()
             elif self.__redis.get(key) == "#search":
                 return self.__SearchInformation()
-            elif self.__redis.get(key) == "#delete":
-                return self.__DeleteInformation()
             elif self.__redis.get(key) == "#modify":
                 return self.__ModifyInformation()
             else:
                 return "Error!"
     def public(self,EventType):
+        if EventType == "DeleteInformation":
+            return self.__DeleteInformation()
         if EventType == "GetComment":
             return self.__GetComment()
         key = "NextEvent:" + self.__userid
