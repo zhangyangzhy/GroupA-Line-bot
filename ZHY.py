@@ -27,7 +27,7 @@ class ProcessMessage:
             try:
                 float(self.__message)
                 return True
-            except:
+            except ValueError:
                 return False
         elif validate == "String":
             return True
@@ -202,7 +202,7 @@ class ProcessMessage:
                                 "action": {
                                   "type": "postback",
                                   "label": "Modify",
-                                  "data": "Modify=%(i)s&Step=1"
+                                  "data": "Modify=%(i)s"
                                 },
                                 "height": "sm"
                               },
@@ -314,10 +314,47 @@ class ProcessMessage:
             return "Delete successfully"
         else:
             return "Fail to delete, this information has been deleted before"
-    def __ModifyInformation(self):
-        # 判断是否被删除
-        # return "Fail to modify, this information has been deleted before"
-        return
+    def __ModifyInformation(self,step):
+        attributes = ["Store Name", "Commodity Name", "Price", "Unit", "Quantity", "Location"]
+        events = ["TextMessage", "TextMessage", "TextMessage", "TextMessage", "TextMessage","LocationMessage"]
+        validates = ["String", "String", "Float", "String", "Integer", "String"]
+        ActionKey = "Action:" + self.__userid
+        EventKey = "NextEvent:" + self.__userid
+        if step == 1:
+            InformationKey = "Information:" + self.__userid + ":" + self.__message
+            if self.__redis.exists(InformationKey):
+                self.__redis.set(ActionKey, "#modify@"+self.__message, ex=self.__expire)
+                self.__redis.set(EventKey, "TextMessage", ex=self.__expire)
+                content = "Please reply one attribute:"
+                for attribute in attributes:
+                    content = content + "\n" + attribute
+                return content
+            else:
+                return "Fail to modify, this information has been deleted before"
+        elif step == 2:
+            if self.__message in attributes:
+                id = self.__redis.get(ActionKey).split("@")[1]
+                index = attributes.index(self.__message)
+                event = events[index]
+                self.__redis.set(EventKey, event, ex=self.__expire)
+                self.__redis.set(ActionKey, "#modify-"+id+"-"+self.__message, ex=self.__expire)
+                return "Please reply the value of '" + self.__message + "':"
+            else:
+                return "Attribute name error, please reply again"
+        else:
+            split = self.__redis.get(ActionKey).split("-")
+            id = split[1]
+            attribute = split[2]
+            index = attributes.index(attribute)
+            InformationKey = "Information:" + self.__userid + ":" + id
+            if self.__ValidateDataType(validates[index]):
+                self.__redis.delete(ActionKey)
+                self.__redis.delete(EventKey)
+                self.__redis.hset(InformationKey, attribute, self.__message)
+                # Update time after modification
+                self.__redis.hset(InformationKey, "Datetime", time.time())
+                return "Modify '"+ attribute +"' successfully"
+            return "Data type error, need " + validates[index] + ", please reply again"
     def __SearchInformation(self):
         return
     def __Comment(self):
@@ -382,12 +419,9 @@ class ProcessMessage:
         elif self.__message == "#search":
             self.__redis.set(key, "#search", ex=self.__expire)
             return self.__SearchInformation()
-        elif self.__message.startswith("#modify-"):
-            self.__redis.set(key, "#modify", ex=self.__expire)
-            return self.__ModifyInformation()
-        elif self.__message.startswith("#comment-"):
+        elif str(self.__message).startswith("#comment-"):
             return self.__Comment()
-        elif self.__message.startswith("#rate-"):
+        elif str(self.__message).startswith("#rate-"):
             return self.__Rate()
         elif self.__message == "#exit":
             return self.__Exit()
@@ -396,11 +430,18 @@ class ProcessMessage:
                 return self.__PublishInformation()
             elif self.__redis.get(key) == "#search":
                 return self.__SearchInformation()
-            elif self.__redis.get(key) == "#modify":
-                return self.__ModifyInformation()
+            elif str(self.__redis.get(key)).startswith("#modify"):
+                if str(self.__redis.get(key)).startswith("#modify@"):
+                    return self.__ModifyInformation(2)
+                else:
+                    return self.__ModifyInformation(3)
             else:
                 return "Error!"
     def public(self,EventType):
+        if EventType == "ModifyInformation":
+            # In case processing the same procedure again
+            self.__Exit()
+            return self.__ModifyInformation(1)
         if EventType == "DeleteInformation":
             return self.__DeleteInformation()
         if EventType == "GetComment":

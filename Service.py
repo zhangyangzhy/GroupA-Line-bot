@@ -228,25 +228,25 @@ def handle_FollowEvent(event):
         thumbnail_image_url=
         "https://obs.line-scdn.net/0h_TFUioZ5AHt7LCh0KO1_LFpxCxlITh5wWUpIGVwkXE1RHEBDExhPHg0sWhwBT0AuT0gbHjAsVh5XFUQrQA9OTg4pV09fGw/f256x256",
         title='Module List',
-        text='Welcome to follow, click one to get the module tutorial:',
+        text='Welcome to follow, click one to get the module instruction:',
         image_size="contain",
         actions=[
             PostbackAction(label='Publish & Search',
-                           data='#Module 1 Tutorial'),
-            PostbackAction(label='News Summaries', data='#Module 2 Tutorial'),
+                           data='#Module 1 Instruction'),
+            PostbackAction(label='News Summaries', data='#Module 2 Instruction'),
             PostbackAction(label='Anti-Coronavirus',
-                           data='#Module 3 Tutorial'),
+                           data='#Module 3 Instruction'),
         ])
     line_bot_api.reply_message(
         event.reply_token,
-        TemplateSendMessage(alt_text="Follow Event",
+        TemplateSendMessage(alt_text="The Module Instruction",
                             template=button_template_message))
 
 
 # Handler function for Postback Event
 def handle_PostbackEvent(event):
-    if event.postback.data == "#Module 1 Tutorial":
-        msg =TextSendMessage( '''Module 1 Tutorial:
+    if event.postback.data == "#Module 1 Instruction":
+        msg =TextSendMessage( '''Module 1 Instruction:
 
 1. Reply '#my' to find the historical store information that you have published;
 
@@ -254,19 +254,21 @@ def handle_PostbackEvent(event):
 
 3. Reply '#search' to query the records within 10KM of your current location;
 
-4. Reply '#modify-ID' to modify the attribute value;
+4. Reply '#delete-ID' to delete the specific record you have published permanently;
 
-5. Reply '#comment-ID-CONTENT' to comment on store information that is not published by yourself;
+5. Reply '#modify-ID' to modify the attribute value;
 
-6. Reply '#rate-ID-SCORE' to rate the credibility of store information;
+6. Reply '#comment-ID-CONTENT' to comment on store information that is not published by yourself;
 
-7. Reply '#exit' to terminate the current procedure.''')
-    elif event.postback.data == "#Module 2 Tutorial":
-        msg = TextSendMessage('''Module 2 Tutorial:
+7. Reply '#rate-ID-SCORE' to rate the credibility of store information;
+
+8. Reply '#exit' to terminate the current procedure.''')
+    elif event.postback.data == "#Module 2 Instruction":
+        msg = TextSendMessage('''Module 2 Instruction:
 TO DO...
 Written by WU Peicong''')
-    elif event.postback.data == "#Module 3 Tutorial":
-        msg = TextSendMessage('''Module 3 Tutorial:
+    elif event.postback.data == "#Module 3 Instruction":
+        msg = TextSendMessage('''Module 3 Instruction:
 
 1. Reply '$measurements' to show information stored in the redis;
 
@@ -278,7 +280,7 @@ Written by WU Peicong''')
 
 Important:
 Notice: You should add '$' at the beginning of your query when you want to test on this module. Thanks for cooperation. :)''')
-    elif event.postback.data.startswith("Address="):
+    elif str(event.postback.data).startswith("Address="):
         params = parse.parse_qs(event.postback.data)
         msg = LocationSendMessage(
             title=params["Title"][0],
@@ -286,17 +288,17 @@ Notice: You should add '$' at the beginning of your query when you want to test 
             latitude=params["Lat"][0],
             longitude=params["Lng"][0]
         )
-    elif event.postback.data.startswith("GetComment="):
+    elif str(event.postback.data).startswith("GetComment="):
         params = parse.parse_qs(event.postback.data)
         message = ProcessMessage(event.source.user_id,params["GetComment"][0]).public("GetComment")
         msg = TextSendMessage(message)
-    elif event.postback.data.startswith("Delete="):
+    elif str(event.postback.data).startswith("Delete="):
         params = parse.parse_qs(event.postback.data)
         id = params["Delete"][0]
         step = params["Step"][0]
         if step == "1":
             msg = TemplateSendMessage(
-                alt_text='Confirm template',
+                alt_text='Confirm Message',
                 template=ConfirmTemplate(
                     text='Are you sure to delete?',
                     actions=[
@@ -316,7 +318,9 @@ Notice: You should add '$' at the beginning of your query when you want to test 
             msg = TextSendMessage(message)
         else:
             msg = TextSendMessage("Cancel successfully")
-    elif event.postback.data.startswith("Modify="):
+    elif str(event.postback.data).startswith("Modify="):
+        params = parse.parse_qs(event.postback.data)
+        id = params["Modify"][0]
         msg = TextSendMessage("Modify")
     else:
         msg = TextSendMessage("Error")
@@ -325,11 +329,11 @@ Notice: You should add '$' at the beginning of your query when you want to test 
 
 # Handler function for Text Message
 def handle_TextMessage(event):
-    if event.message.text.startswith("@"):
+    if str(event.message.text).startswith("@"):
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage("TO DO... Written by WU Peicong"))
-    elif event.message.text.startswith("$"):
+    elif str(event.message.text).startswith("$"):
         global flag
         global test_x, test_y, test_z
         if event.message.text == "$basic measurements":
@@ -359,7 +363,7 @@ def handle_TextMessage(event):
         if isinstance(message, dict):
             line_bot_api.reply_message(
                 event.reply_token,
-                FlexSendMessage(alt_text='test', contents=message))
+                FlexSendMessage(alt_text='My Published Information', contents=message))
         else:
             if message == "Error!":
                 line_bot_api.reply_message(
@@ -370,13 +374,13 @@ def handle_TextMessage(event):
                         quick_reply=QuickReply(items=[
                             QuickReplyButton(action=PostbackAction(
                                 label='Publish & Search',
-                                data='#Module 1 Tutorial')),
+                                data='#Module 1 Instruction')),
                             QuickReplyButton(action=PostbackAction(
                                 label='News Summaries',
-                                data='#Module 2 Tutorial')),
+                                data='#Module 2 Instruction')),
                             QuickReplyButton(action=PostbackAction(
                                 label='Anti-Coronavirus',
-                                data='#Module 3 Tutorial'))
+                                data='#Module 3 Instruction'))
                         ])))
             else:
                 line_bot_api.reply_message(event.reply_token,
