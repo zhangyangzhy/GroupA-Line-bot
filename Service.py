@@ -290,7 +290,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
             msg = TemplateSendMessage(
                 alt_text='Confirm template',
                 template=ConfirmTemplate(
-                    text='Are you sure to delete?\nInformation will be deleted permanently',
+                    text='Are you sure to delete?',
                     actions=[
                         PostbackAction(
                             label='Yes',
@@ -298,16 +298,14 @@ Notice: You should add '$' at the beginning of your query when you want to test 
                         ),
                         PostbackAction(
                             label='No',
-                            data='Delete='+id+'&Step=3',
+                            display_text="Cancel successfully",
                         )
                     ]
                 )
             )
-        elif step == "2":
+        else:
             message = ProcessMessage(event.source.user_id, id).public("DeleteInformation")
             msg = TextSendMessage(message)
-        else:
-            msg = TextMessage("Cancel successfully")
     elif event.postback.data.startswith("Modify="):
         msg = TextSendMessage("Modify")
     else:
