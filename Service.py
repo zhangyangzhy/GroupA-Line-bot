@@ -298,7 +298,6 @@ Notice: You should add '$' at the beginning of your query when you want to test 
                         ),
                         PostbackAction(
                             label='No',
-                            display_text="Cancel successfully",
                             data='Delete='+id+'&Step=3',
                         )
                     ]
@@ -308,7 +307,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
             message = ProcessMessage(event.source.user_id, id).public("DeleteInformation")
             msg = TextSendMessage(message)
         else:
-            return
+            msg = TextSendMessage("Cancel successfully")
     elif event.postback.data.startswith("Modify="):
         msg = TextSendMessage("Modify")
     else:
