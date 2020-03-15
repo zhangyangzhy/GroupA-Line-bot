@@ -302,13 +302,21 @@ class ProcessMessage:
     def __DeleteInformation(self):
         InformationId = self.__message
         UserId = self.__userid
-        key = "Information:"+UserId+":"+InformationId
-        if self.__redis.exists(key):
-            self.__redis.delete(key)
+        Informationkey = "Information:"+UserId+":"+InformationId
+        CommentKeys = self.__redis.keys("Comment:*:"+InformationId)
+        RateKeys = self.__redis.keys("Rate:*:"+InformationId)
+        if self.__redis.exists(Informationkey):
+            self.__redis.delete(Informationkey)
+            for comment in CommentKeys:
+                self.__redis.delete(comment)
+            for rate in RateKeys:
+                self.__redis.delete(rate)
             return "Delete successfully"
         else:
             return "Fail to delete, this information has been deleted before"
     def __ModifyInformation(self):
+        # 判断是否被删除
+        # return "Fail to modify, this information has been deleted before"
         return
     def __SearchInformation(self):
         return
