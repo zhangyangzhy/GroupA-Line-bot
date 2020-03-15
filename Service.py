@@ -29,13 +29,6 @@ app = Flask(__name__)
 channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
 channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
 
-# get redis_host, redis_password and redis_port from your environment variable
-redis_host = os.getenv('REDIS_HOST', None)
-redis_password = os.getenv('REDIS_PASSWORD', None)
-redis_port = os.getenv('REDIS_PORT', None)
-
-r = redis.Redis(host=redis_host, password=redis_password, port=redis_port)
-
 # connect the redis server --- Hubert's
 redis_host_li = "redis-19723.c61.us-east-1-3.ec2.cloud.redislabs.com"
 redis_password_li = "15235021453.ljhX"
@@ -252,9 +245,9 @@ def handle_PostbackEvent(event):
 
 2. Reply '#publish' to publish the information;
 
-3. Reply '#search' to query the records within 10KM of your current location;
+3. Reply '#search' to query the information records within 10KM of your current location;
 
-4. Reply '#delete-ID' to delete the specific record you have published permanently;
+4. Reply '#delete-ID' to delete the specific information record you have published permanently;
 
 5. Reply '#modify-ID' to modify the attribute value;
 
@@ -322,6 +315,16 @@ Notice: You should add '$' at the beginning of your query when you want to test 
         params = parse.parse_qs(event.postback.data)
         id = params["Modify"][0]
         message = ProcessMessage(event.source.user_id, id).public("ModifyInformation")
+        msg = TextSendMessage(message)
+    elif str(event.postback.data).startswith("Rate="):
+        params = parse.parse_qs(event.postback.data)
+        id = params["Rate"][0]
+        message = ProcessMessage(event.source.user_id, id).public("RateInformation")
+        msg = TextSendMessage(message)
+    elif str(event.postback.data).startswith("Comment="):
+        params = parse.parse_qs(event.postback.data)
+        id = params["Comment"][0]
+        message = ProcessMessage(event.source.user_id, id).public("CommentInformation")
         msg = TextSendMessage(message)
     else:
         msg = TextSendMessage("Error")

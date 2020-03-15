@@ -4,6 +4,7 @@ import datetime
 import pytz
 import json
 import random
+from geopy.distance import geodesic
 class Connection:
     def __init__(self):
         self.__host = "redis-16887.c15.us-east-1-4.ec2.cloud.redislabs.com"
@@ -52,7 +53,7 @@ class ProcessMessage:
             else:
                 return "No one comments this information"
         else:
-            contents = "Comment of #"+Informationid+" Information:"
+            contents = "Comments of Information:"
             for key in CommentKey:
                 comment = self.__redis.get(key)
                 contents = contents + "\n\n" + comment
@@ -338,53 +339,269 @@ class ProcessMessage:
                 self.__redis.hset(InformationKey, "Datetime", time.time())
                 return "Modify '"+ attribute +"' successfully"
             return "Data type error, need " + validates[index] + ", please reply again"
-    def __SearchInformation(self):
-        return
-    def __Comment(self):
-        message = self.__message.split("-",2)
-        if len(message) != 3:
-            return "Format error, should be #comment-ID-CONTENT, please reply again"
-        informationID = message[1]
-        if not informationID.isdigit():
-            return "Record ID data type error, should be integer, please reply again"
-        comment = message[2]
-        if comment == "":
-            return "Not allow empty comment, please reply again"
-        InformationKey = self.__redis.keys("Information:*:" + informationID)
-        if len(InformationKey) != 1:
-            return "No such record ID, please reply again"
-        UserID = InformationKey[0].split(":")[1]
-        if UserID == self.__userid:
-            return "Can't comment your own record, please reply again"
-        CommentKey = "Comment:" + self.__userid + ":" + informationID
-        self.__redis.set(CommentKey, comment)
-        return "Comment successfully"
-    def __Rate(self):
-        message = self.__message.split("-", 2)
-        if len(message) != 3:
-            return "Format error, should be #rate-ID-SCORE, please reply again"
-        informationID = message[1]
-        if not informationID.isdigit():
-            return "Record ID data type error, should be integer, please reply again"
-        rate = message[2]
-        if rate == "":
-            return "Not allow empty score, please reply again"
-        InformationKey = self.__redis.keys("Information:*:" + informationID)
-        if len(InformationKey) != 1:
-            return "No such record ID, please reply again"
-        UserID = InformationKey[0].split(":")[1]
-        if UserID == self.__userid:
-            return "Can't rate your own record, please reply again"
-        # Validate Data Type
-        try:
-            int(rate)
-            if int(rate) < 0 or int(rate) > 100:
-                return "Range should from 0 to 100, please reply again"
-            RateKey = "Rate:" + self.__userid + ":" + informationID
-            self.__redis.set(RateKey, rate)
-            return "Rate successfully"
-        except ValueError:
-            return "Data type error, need Integer, please reply again"
+    def __SearchInformation(self,step):
+        ActionKey = "Action:" + self.__userid
+        EventKey = "NextEvent:" + self.__userid
+        if step == 1:
+            self.__redis.set(ActionKey, "#search", ex=self.__expire)
+            self.__redis.set(EventKey, "LocationMessage", ex=self.__expire)
+            return "Please reply the Location (LocationMessage):"
+        else:
+            LatLng1 = json.loads(self.__message)["latlng"]
+            InformationKey = self.__redis.keys("Information:*")
+            self.__redis.delete(ActionKey)
+            self.__redis.delete(EventKey)
+            if len(InformationKey) == 0:
+                return "No information record yet"
+            contents = []
+            for info in InformationKey:
+                dic = self.__redis.hgetall(info)
+                LatLng2 = json.loads(dic["Location"])["latlng"]
+                if geodesic((LatLng1), (LatLng2)).km <= 10:
+                    id = info.split(":")[-1]
+                    LatLng = LatLng2.split(",")
+                    lat = LatLng[0]
+                    lng = LatLng[1]
+                    content = json.dumps({
+                        "type": "bubble",
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "%(s)s",
+                                            "weight": "bold",
+                                            "size": "xl"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "%(c)s",
+                                            "size": "xl"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "Rate",
+                                            "weight": "bold",
+                                            "size": "lg"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "%(r)s",
+                                            "size": "lg"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "Price",
+                                            "weight": "bold",
+                                            "size": "lg"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "$%(p)s / %(u)s",
+                                            "size": "lg"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "Quantity",
+                                            "weight": "bold",
+                                            "size": "lg"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "%(q)s %(u)s",
+                                            "size": "lg"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "%(t)s",
+                                            "size": "md"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "%(a)s",
+                                            "size": "md"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "contents": [
+                                        {
+                                            "type": "button",
+                                            "style": "primary",
+                                            "action": {
+                                                "type": "postback",
+                                                "label": "Rate",
+                                                "data": "Rate=%(i)s"
+                                            },
+                                            "height": "sm"
+                                        },
+                                        {
+                                            "type": "button",
+                                            "action": {
+                                                "type": "postback",
+                                                "label": "Comment",
+                                                "data": "Comment=%(i)s"
+                                            },
+                                            "style": "primary",
+                                            "color": "#DC3545",
+                                            "height": "sm"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "button",
+                                            "action": {
+                                                "type": "postback",
+                                                "label": "Get Location",
+                                                "data": "%(Location)s"
+                                            },
+                                            "style": "primary",
+                                            "color": "#007BFF",
+                                            "height": "sm"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "contents": [
+                                        {
+                                            "type": "button",
+                                            "action": {
+                                                "type": "postback",
+                                                "label": "Check Comment",
+                                                "data": "%(Comment)s"
+                                            },
+                                            "style": "link",
+                                            "height": "sm"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }) % {'s': dic["Store Name"],
+                          'c': dic["Commodity Name"],
+                          'i': id,
+                          'r': self.__GetRate(id),
+                          'p': dic["Price"],
+                          'u': dic["Unit"],
+                          'q': dic["Quantity"],
+                          't': datetime.datetime.fromtimestamp(float(dic["Datetime"]),
+                                                               pytz.timezone('Asia/Shanghai')).strftime(
+                              '%Y-%m-%d %H:%M:%S'),
+                          'a': json.loads(dic["Location"])["address"],
+                          'Location': "Address=" + str(json.loads(dic["Location"])["address"]) + "&Lat=" + str(
+                              lat) + "&Lng=" + str(lng) + "&Title=" + str(dic["Store Name"]),
+                          'Comment': "GetComment=" + id
+                          }
+                    contents.append(json.loads(content))
+            config = {
+                "type": "carousel",
+                "contents": contents
+            }
+            return config
+    def __Comment(self,step):
+        ActionKey = "Action:" + self.__userid
+        EventKey = "NextEvent:" + self.__userid
+        if step == 1:
+            InformationKey = self.__redis.keys("Information:*:" + self.__message)
+            if len(InformationKey) != 1:
+                return "Fail to comment, this information has been deleted before"
+            UserID = InformationKey[0].split(":")[1]
+            if UserID == self.__userid:
+                return "Can't comment your own information"
+            self.__redis.set(ActionKey, "#comment@" + self.__message, ex=self.__expire)
+            self.__redis.set(EventKey, "TextMessage", ex=self.__expire)
+            return "Please reply your comment:"
+        else:
+            id = self.__redis.get(ActionKey).split("@")[1]
+            self.__redis.delete(ActionKey)
+            self.__redis.delete(EventKey)
+            InformationKey = self.__redis.keys("Information:*:" + id)
+            if len(InformationKey) != 1:
+                return "Fail to comment, this information has been deleted when you are commenting"
+            CommentKey = "Comment:" + self.__userid + ":" + id
+            self.__redis.set(CommentKey, self.__message)
+            return "Comment successfully"
+    def __Rate(self,step):
+        ActionKey = "Action:" + self.__userid
+        EventKey = "NextEvent:" + self.__userid
+        if step == 1:
+            InformationKey = self.__redis.keys("Information:*:" + self.__message)
+            if len(InformationKey) != 1:
+                return "Fail to rate, this information has been deleted before"
+            UserID = InformationKey[0].split(":")[1]
+            if UserID == self.__userid:
+                return "Can't rate your own information"
+            self.__redis.set(ActionKey, "#rate@" + self.__message, ex=self.__expire)
+            self.__redis.set(EventKey, "TextMessage", ex=self.__expire)
+            return "Please reply your score (0-100):"
+        else:
+            id = self.__redis.get(ActionKey).split("@")[1]
+            self.__redis.delete(ActionKey)
+            self.__redis.delete(EventKey)
+            InformationKey = self.__redis.keys("Information:*:" + id)
+            if len(InformationKey) != 1:
+                return "Fail to rate, this information has been deleted when you are rating"
+            # Validate Data Type
+            try:
+                int(self.__message)
+                if int(self.__message) < 0 or int(self.__message) > 100:
+                    return "Fail to rate, range should from 0 to 100"
+                RateKey = "Rate:" + self.__userid + ":" + id
+                self.__redis.set(RateKey, self.__message)
+                return "Rate successfully"
+            except ValueError:
+                return "Fail to rate, data type error, need Integer"
     def __Exit(self):
         self.__redis.delete("Action:"+self.__userid)
         self.__redis.delete("TempInformation:" + self.__userid)
@@ -393,30 +610,33 @@ class ProcessMessage:
     def __Filter(self):
         key = "Action:"+self.__userid
         if self.__message == "#my":
+            # In case processing the same procedure again
+            self.__Exit()
             return self.__MyInformation()
         elif self.__message == "#publish":
             # In case processing the same procedure again
             self.__Exit()
             return self.__PublishInformation()
         elif self.__message == "#search":
-            self.__redis.set(key, "#search", ex=self.__expire)
-            return self.__SearchInformation()
-        elif str(self.__message).startswith("#comment-"):
-            return self.__Comment()
-        elif str(self.__message).startswith("#rate-"):
-            return self.__Rate()
+            # In case processing the same procedure again
+            self.__Exit()
+            return self.__SearchInformation(1)
         elif self.__message == "#exit":
             return self.__Exit()
         else:
             if self.__redis.get(key) == "#publish":
                 return self.__PublishInformation()
             elif self.__redis.get(key) == "#search":
-                return self.__SearchInformation()
+                return self.__SearchInformation(2)
             elif str(self.__redis.get(key)).startswith("#modify"):
                 if str(self.__redis.get(key)).startswith("#modify@"):
                     return self.__ModifyInformation(2)
                 else:
                     return self.__ModifyInformation(3)
+            elif str(self.__redis.get(key)).startswith("#rate@"):
+                return self.__Rate(2)
+            elif str(self.__redis.get(key)).startswith("#comment@"):
+                return self.__Comment(2)
             else:
                 return "Event type error!"
     def public(self,EventType):
@@ -424,9 +644,21 @@ class ProcessMessage:
             # In case processing the same procedure again
             self.__Exit()
             return self.__ModifyInformation(1)
+        if EventType == "RateInformation":
+            # In case processing the same procedure again
+            self.__Exit()
+            return self.__Rate(1)
+        if EventType == "CommentInformation":
+            # In case processing the same procedure again
+            self.__Exit()
+            return self.__Comment(1)
         if EventType == "DeleteInformation":
+            # In case processing the same procedure again
+            self.__Exit()
             return self.__DeleteInformation()
         if EventType == "GetComment":
+            # In case processing the same procedure again
+            self.__Exit()
             return self.__GetComment()
         key = "NextEvent:" + self.__userid
         if self.__redis.exists(key):
