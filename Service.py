@@ -16,7 +16,7 @@ from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
                             StickerSendMessage, TemplateSendMessage,
                             ButtonsTemplate, PostbackAction, LocationMessage,
                             AudioMessage, QuickReplyButton, QuickReply,
-                            BubbleContainer, FlexSendMessage, LocationSendMessage,ConfirmTemplate,MessageAction)
+                            BubbleContainer, FlexSendMessage, LocationSendMessage,ConfirmTemplate)
 from linebot.utils import PY3
 from ZHY import ProcessMessage
 import json
@@ -290,22 +290,24 @@ Notice: You should add '$' at the beginning of your query when you want to test 
             msg = TemplateSendMessage(
                 alt_text='Confirm template',
                 template=ConfirmTemplate(
-                    text='Are you sure to delete?',
+                    text='Are you sure to delete?\nInformation will be deleted permanently',
                     actions=[
                         PostbackAction(
                             label='Yes',
                             data='Delete='+id+'&Step=2'
                         ),
-                        MessageAction(
+                        PostbackAction(
                             label='No',
-                            text='Cancel successfully'
+                            data='Delete='+id+'&Step=3',
                         )
                     ]
                 )
             )
-        else:
+        elif step == "2":
             message = ProcessMessage(event.source.user_id, id).public("DeleteInformation")
             msg = TextSendMessage(message)
+        else:
+            msg = TextMessage("Cancel successfully")
     elif event.postback.data.startswith("Modify="):
         msg = TextSendMessage("Modify")
     else:

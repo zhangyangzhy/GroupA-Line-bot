@@ -45,7 +45,7 @@ class ProcessMessage:
         Informationid = self.__message
         CommentKey = self.__redis.keys("Comment:*:" + Informationid)
         if len(CommentKey) == 0:
-            return "No one comment this information"
+            return "No one comments this information"
         else:
             contents = "Comment of #"+Informationid+" Information:"
             for key in CommentKey:
@@ -55,7 +55,7 @@ class ProcessMessage:
     def __MyInformation(self):
         InformationKey = self.__redis.keys("Information:" + self.__userid + ":*")
         if len(InformationKey) == 0:
-            return "You haven't published information yet"
+            return "You haven't published information yet, try to reply #publish"
         else:
             contents = []
             for info in  InformationKey:
