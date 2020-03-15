@@ -400,12 +400,15 @@ def handle_LocationMessage(event):
         "address": event.message.address
     }
     text = json.dumps(dic)
-    print(text)
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(
-            ProcessMessage(event.source.user_id,
-                           text).public("LocationMessage")))
+    message = ProcessMessage(event.source.user_id,
+                           text).public("LocationMessage")
+    if isinstance(message, dict):
+        line_bot_api.reply_message(
+            event.reply_token,
+            FlexSendMessage(alt_text='Published Information Near Me', contents=message))
+    else:
+        line_bot_api.reply_message(event.reply_token,
+                               TextSendMessage(message))
 
 
 # Handler function for Sticker Message
