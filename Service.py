@@ -286,7 +286,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
         params = parse.parse_qs(event.postback.data)
         id = params["Delete"][0]
         step = params["Step"][0]
-        if step == 1:
+        if step == "1":
             msg = TemplateSendMessage(
                 alt_text='Confirm template',
                 template=ConfirmTemplate(
