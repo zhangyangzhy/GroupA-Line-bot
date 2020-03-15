@@ -545,7 +545,7 @@ class ProcessMessage:
                           }
                     contents.append(json.loads(content))
             if len(contents) == 0:
-                return "No information record within 10KM of your current location"
+                return "No information record within 10KM of your selected location"
             config = {
                 "type": "carousel",
                 "contents": contents
@@ -558,9 +558,6 @@ class ProcessMessage:
             InformationKey = self.__redis.keys("Information:*:" + self.__message)
             if len(InformationKey) != 1:
                 return "Fail to comment, this information has been deleted before"
-            UserID = InformationKey[0].split(":")[1]
-            if UserID == self.__userid:
-                return "Can't comment your own information"
             self.__redis.set(ActionKey, "#comment@" + self.__message, ex=self.__expire)
             self.__redis.set(EventKey, "TextMessage", ex=self.__expire)
             return "Please reply your comment:"
@@ -581,9 +578,6 @@ class ProcessMessage:
             InformationKey = self.__redis.keys("Information:*:" + self.__message)
             if len(InformationKey) != 1:
                 return "Fail to rate, this information has been deleted before"
-            UserID = InformationKey[0].split(":")[1]
-            if UserID == self.__userid:
-                return "Can't rate your own information"
             self.__redis.set(ActionKey, "#rate@" + self.__message, ex=self.__expire)
             self.__redis.set(EventKey, "TextMessage", ex=self.__expire)
             return "Please reply your score (0-100):"

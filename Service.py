@@ -245,7 +245,7 @@ def handle_PostbackEvent(event):
 
 2. Reply '#publish' to publish the information;
 
-3. Reply '#search' to query the information records within 10KM of your current location, and you can rate and comment them;
+3. Reply '#search' to query the information records within 10KM of your selected location, and you can rate and comment them;
 
 4. Reply '#exit' to terminate the current procedure.''')
     elif event.postback.data == "#Module 2 Instruction":
