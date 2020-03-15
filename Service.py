@@ -366,12 +366,12 @@ def handle_TextMessage(event):
                 event.reply_token,
                 FlexSendMessage(alt_text='My Published Information', contents=message))
         else:
-            if message == "Error!":
+            if message == "Event type error!":
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(
                         text=
-                        'Please input action first (you can refer the quick reply button)',
+                        'Input error, reason:\n\n1. No action detected (tap quick reply for details);\n\n2. No response of previous action for long time.',
                         quick_reply=QuickReply(items=[
                             QuickReplyButton(action=PostbackAction(
                                 label='Publish & Search',
@@ -441,8 +441,11 @@ def handle_FileMessage(event):
 
 # Handler function for Audio Message
 def handle_AudioMessage(event):
-    line_bot_api.reply_message(event.reply_token,
-                               TextSendMessage("TO DO...Written by LI Jinhui"))
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(
+            ProcessMessage(event.source.user_id,
+                           event.message.id).public("AudioMessage")))
 
 
 if __name__ == "__main__":

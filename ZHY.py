@@ -3,6 +3,7 @@ import time
 import datetime
 import pytz
 import json
+import random
 class Connection:
     def __init__(self):
         self.__host = "redis-16887.c15.us-east-1-4.ec2.cloud.redislabs.com"
@@ -91,25 +92,6 @@ class ProcessMessage:
                                 "text": "%(c)s",
                                 "size": "xl"
                               }
-                            ]
-                          },
-                          {
-                            "type": "box",
-                            "layout": "horizontal",
-                            "contents": [
-                                {
-                                    "type": "text",
-                                    "text": "ID",
-                                    "weight": "bold",
-                                    "size": "lg",
-                                    "color": "#F0AD4E"
-                                },
-                                {
-                                    "type": "text",
-                                    "text": "%(i)s",
-                                    "size": "lg",
-                                    "color": "#F0AD4E"
-                                }
                             ]
                           },
                           {
@@ -287,8 +269,9 @@ class ProcessMessage:
                 self.__redis.delete(EventKey)
                 self.__redis.hset(InformationKey, current, self.__message)
                 self.__redis.persist(InformationKey)
+                InformationId = str(int(time.time()))+str(random.randint(100,999))
                 # Guarantee each user can publish multiple information
-                self.__redis.rename(InformationKey,"Information:"+self.__userid+":"+str(len(self.__redis.keys("Information:*"))+1))
+                self.__redis.rename(InformationKey,"Information:"+self.__userid+":"+InformationId)
                 return "Publish information successfully"
             else:
                 # Store next validate Event Type
@@ -410,7 +393,6 @@ class ProcessMessage:
     def __Filter(self):
         key = "Action:"+self.__userid
         if self.__message == "#my":
-            self.__redis.set(key, "#my", ex=self.__expire)
             return self.__MyInformation()
         elif self.__message == "#publish":
             # In case processing the same procedure again
@@ -436,7 +418,7 @@ class ProcessMessage:
                 else:
                     return self.__ModifyInformation(3)
             else:
-                return "Error!"
+                return "Event type error!"
     def public(self,EventType):
         if EventType == "ModifyInformation":
             # In case processing the same procedure again
