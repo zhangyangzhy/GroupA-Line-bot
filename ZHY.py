@@ -273,7 +273,7 @@ class ProcessMessage:
                 InformationId = str(int(time.time()))+str(random.randint(100,999))
                 # Guarantee each user can publish multiple information
                 self.__redis.rename(InformationKey,"Information:"+self.__userid+":"+InformationId)
-                return "Publish information successfully"
+                return "Publish information successfully, reply #my to view"
             else:
                 # Store next validate Event Type
                 self.__redis.set(EventKey, event[self.__redis.hlen(InformationKey) + 1], ex=self.__expire)
@@ -337,7 +337,7 @@ class ProcessMessage:
                 self.__redis.hset(InformationKey, attribute, self.__message)
                 # Update time after modification
                 self.__redis.hset(InformationKey, "Datetime", time.time())
-                return "Modify '"+ attribute +"' successfully"
+                return "Modify '"+ attribute +"' successfully, reply #my to view"
             return "Data type error, need " + validates[index] + ", please reply again"
     def __SearchInformation(self,step):
         ActionKey = "Action:" + self.__userid
@@ -352,7 +352,7 @@ class ProcessMessage:
             self.__redis.delete(ActionKey)
             self.__redis.delete(EventKey)
             if len(InformationKey) == 0:
-                return "No information record yet"
+                return "No information record in database yet"
             contents = []
             for info in InformationKey:
                 dic = self.__redis.hgetall(info)
@@ -544,6 +544,8 @@ class ProcessMessage:
                           'Comment': "GetComment=" + id
                           }
                     contents.append(json.loads(content))
+            if len(contents) == 0:
+                return "No information record within 10KM of your current location"
             config = {
                 "type": "carousel",
                 "contents": contents

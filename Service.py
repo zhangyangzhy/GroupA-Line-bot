@@ -241,21 +241,13 @@ def handle_PostbackEvent(event):
     if event.postback.data == "#Module 1 Instruction":
         msg =TextSendMessage( '''Module 1 Instruction:
 
-1. Reply '#my' to find the historical store information that you have published;
+1. Reply '#my' to find the historical store information that you have published, and you can modify and delete them;
 
 2. Reply '#publish' to publish the information;
 
-3. Reply '#search' to query the information records within 10KM of your current location;
+3. Reply '#search' to query the information records within 10KM of your current location, and you can rate and comment them;
 
-4. Reply '#delete-ID' to delete the specific information record you have published permanently;
-
-5. Reply '#modify-ID' to modify the attribute value;
-
-6. Reply '#comment-ID-CONTENT' to comment on store information that is not published by yourself;
-
-7. Reply '#rate-ID-SCORE' to rate the credibility of store information;
-
-8. Reply '#exit' to terminate the current procedure.''')
+4. Reply '#exit' to terminate the current procedure.''')
     elif event.postback.data == "#Module 2 Instruction":
         msg = TextSendMessage('''Module 2 Instruction:
 
@@ -404,8 +396,7 @@ def handle_TextMessage(event):
 # Handler function for Location Message
 def handle_LocationMessage(event):
     dic = {
-        "latlng":
-        str(event.message.latitude) + "," + str(event.message.longitude),
+        "latlng": str(event.message.latitude) + "," + str(event.message.longitude),
         "address": event.message.address
     }
     text = json.dumps(dic)
