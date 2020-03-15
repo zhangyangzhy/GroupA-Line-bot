@@ -67,24 +67,7 @@ def callback():
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
-            global flag
-            global test_x, test_y, test_z
-            if event.message.text == "basic measurements":
-                flag += 1
-                basic_measure(event, flag)
-            else:
-                if flag == 0:
-                    handle_TextMessage(event)
-                else:
-                    if flag == 3:
-                        flag += 1
-                        basic_measure(event, flag)
-                        # end of the test, reset the global variables
-                        flag = 0
-                        test_x, test_y, test_z = 0, 0, 0
-                    else:
-                        flag += 1
-                        basic_measure(event, flag)
+            handle_TextMessage(event)
         if isinstance(event.message, ImageMessage):
             handle_ImageMessage(event)
         if isinstance(event.message, VideoMessage):
@@ -125,18 +108,18 @@ def basic_measure(event, flag):
                                    TextSendMessage(re_msg[0]))
     # the second time, recieve user's input -> int. Output the second question
     if flag == 2:
-        test_x = int(event.message.text)
+        test_x = int(str(event.message.text)[1])
         line_bot_api.reply_message(event.reply_token,
                                    TextSendMessage(re_msg[1]))
     # the third time, recieve the second answer,.Output the third question
     if flag == 3:
 
-        test_y = int(event.message.text)
+        test_y = int(str(event.message.text)[1])
         line_bot_api.reply_message(event.reply_token,
                                    TextSendMessage(re_msg[2]))
     # the fourth time, recieve the third answer, output the final report.
     if flag == 4:
-        test_z = int(event.message.text)
+        test_z = int(str(event.message.text)[1])
         # calculate the final score
         score = weight[0] * test_x + weight[1] * test_y + weight[2] * test_z
         # if the score >= threshold, return high risk
@@ -156,8 +139,7 @@ def basic_measure(event, flag):
                                        TextSendMessage(report))
 
 
-# Handler function for Text Message
-def handle_TextMessage(event):
+def handle_Text(event):
     print(event.message.text)
     msg = event.message.text
     ls = str(msg).lower().split(" ")
@@ -172,6 +154,28 @@ def handle_TextMessage(event):
             print(value)
             line_bot_api.reply_message(event.reply_token,
                                        TextSendMessage(value))
+
+
+# Handler function for Text Message
+def handle_TextMessage(event):
+    global flag
+    global test_x, test_y, test_z
+    if event.message.text == "$basic measurements":
+        flag += 1
+        basic_measure(event, flag)
+    else:
+        if flag == 0:
+            handle_Text(event)
+        else:
+            if flag == 3:
+                flag += 1
+                basic_measure(event, flag)
+                # end of the test, reset the global variables
+                flag = 0
+                test_x, test_y, test_z = 0, 0, 0
+            else:
+                flag += 1
+                basic_measure(event, flag)
 
 
 # Handler function for Sticker Message
