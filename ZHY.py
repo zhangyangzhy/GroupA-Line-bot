@@ -619,12 +619,12 @@ class ProcessMessage:
             try:
                 int(self.__message)
                 if int(self.__message) < 0 or int(self.__message) > 100:
-                    return "Fail to rate, range should from 0 to 100"
+                    return "Fail to rate, range should from 0 to 100, please click rate button and reply again"
                 RateKey = "Rate:" + self.__userid + ":" + id
                 self.__redis.set(RateKey, self.__message)
                 return "Rate successfully"
             except ValueError:
-                return "Fail to rate, data type error, need Integer"
+                return "Fail to rate, need Integer, please click rate button and reply again"
     def __Exit(self):
         self.__redis.delete("Action:"+self.__userid)
         self.__redis.delete("TempInformation:" + self.__userid)
