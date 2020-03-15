@@ -45,7 +45,11 @@ class ProcessMessage:
         Informationid = self.__message
         CommentKey = self.__redis.keys("Comment:*:" + Informationid)
         if len(CommentKey) == 0:
-            return "No one comments this information"
+            InformationKey = self.__redis.keys("Information:*:" + Informationid)
+            if len(InformationKey) == 0:
+                return "Not available because information has been deleted"
+            else:
+                return "No one comments this information"
         else:
             contents = "Comment of #"+Informationid+" Information:"
             for key in CommentKey:
@@ -303,7 +307,7 @@ class ProcessMessage:
             self.__redis.delete(key)
             return "Delete successfully"
         else:
-            return "Fail to delete, please get information again"
+            return "Fail to delete, this information has been deleted before"
     def __ModifyInformation(self):
         return
     def __SearchInformation(self):
