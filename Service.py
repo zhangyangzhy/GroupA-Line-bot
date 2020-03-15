@@ -400,6 +400,7 @@ def handle_LocationMessage(event):
         "address": event.message.address
     }
     text = json.dumps(dic)
+    print(text)
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(
