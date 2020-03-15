@@ -354,11 +354,18 @@ class ProcessMessage:
             if len(InformationKey) == 0:
                 return "No information record in database yet"
             contents = []
-            for info in InformationKey:
-                dic = self.__redis.hgetall(info)
+
+            dics = []
+            for i in InformationKey:
+                dic = self.__redis.hgetall(i)
+                dic["id"] = i.split(":")[-1]
+                dics.append(dic)
+            NewDics = sorted(dics, key=lambda k: k['Datetime'], reverse=True)
+
+            for dic in NewDics:
                 LatLng2 = json.loads(dic["Location"])["latlng"]
-                if geodesic((LatLng1), (LatLng2)).km <= 10:
-                    id = info.split(":")[-1]
+                distance = geodesic((LatLng1), (LatLng2)).km
+                if distance <= 10:
                     LatLng = LatLng2.split(",")
                     lat = LatLng[0]
                     lng = LatLng[1]
@@ -383,6 +390,25 @@ class ProcessMessage:
                                             "type": "text",
                                             "text": "%(c)s",
                                             "size": "xl"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "Distance",
+                                            "weight": "bold",
+                                            "size": "lg",
+                                            "color": "#F0AD4E"
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "%(d)s",
+                                            "size": "lg",
+                                            "color": "#F0AD4E"
                                         }
                                     ]
                                 },
@@ -530,8 +556,9 @@ class ProcessMessage:
                         }
                     }) % {'s': dic["Store Name"],
                           'c': dic["Commodity Name"],
-                          'i': id,
-                          'r': self.__GetRate(id),
+                          'i': dic["id"],
+                          'd': format(distance,".1f")+"KM",
+                          'r': self.__GetRate(dic["id"]),
                           'p': dic["Price"],
                           'u': dic["Unit"],
                           'q': dic["Quantity"],
@@ -541,7 +568,7 @@ class ProcessMessage:
                           'a': json.loads(dic["Location"])["address"],
                           'Location': "Address=" + str(json.loads(dic["Location"])["address"]) + "&Lat=" + str(
                               lat) + "&Lng=" + str(lng) + "&Title=" + str(dic["Store Name"]),
-                          'Comment': "GetComment=" + id
+                          'Comment': "GetComment=" + dic["id"]
                           }
                     contents.append(json.loads(content))
             if len(contents) == 0:
