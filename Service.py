@@ -258,8 +258,18 @@ def handle_PostbackEvent(event):
 8. Reply '#exit' to terminate the current procedure.''')
     elif event.postback.data == "#Module 2 Instruction":
         msg = TextSendMessage('''Module 2 Instruction:
-TO DO...
-Written by WU Peicong''')
+
+1. Reply '@News' to get the the latest news about the novel coronavirus from the Internet;
+
+2. Reply '@News title' to view the specific News details you have pass the the title;
+
+3. Reply '@Ranking' to return a news ranking, which will include the hottest News in a day;
+
+4. Reply '@Favourite News title' to collect your favourite News;
+
+5. Reply '@Delete News title' to delete the News you have collected before.
+
+6. Reply '@list' to return the News list you have collected before;''')
     elif event.postback.data == "#Module 3 Instruction":
         msg = TextSendMessage('''Module 3 Instruction:
 
