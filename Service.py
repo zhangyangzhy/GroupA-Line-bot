@@ -254,7 +254,7 @@ def handle_PostbackEvent(event):
 
 1. Reply '@News' to get the the latest news about the novel coronavirus from the Internet;
 
-2. Reply '@News title' to view the specific News details you have pass the the title;
+2. Reply '@Read News title' to view the specific News details you have pass the the title;
 
 3. Reply '@Ranking' to return a news ranking, which will include the hottest News in a day;
 

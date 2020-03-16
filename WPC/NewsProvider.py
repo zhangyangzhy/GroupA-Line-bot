@@ -9,5 +9,6 @@ class NewsProvider:
 
     # handle different type message
     def handle_message(self):
+        if
 
 
