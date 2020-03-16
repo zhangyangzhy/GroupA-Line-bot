@@ -18,6 +18,8 @@ from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
                             AudioMessage, QuickReplyButton, QuickReply,
                             BubbleContainer, FlexSendMessage, LocationSendMessage,ConfirmTemplate)
 from linebot.utils import PY3
+
+import NewsProvider
 from ZHY import ProcessMessage
 import json
 from urllib import parse
@@ -336,9 +338,10 @@ Notice: You should add '$' at the beginning of your query when you want to test 
 # Handler function for Text Message
 def handle_TextMessage(event):
     if str(event.message.text).startswith("@"):
+        message=NewsProvider(event.source.user_id).getNews()
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage("TO DO... Written by WU Peicong"))
+            TextSendMessage(message))
     elif str(event.message.text).startswith("$"):
         global flag
         global test_x, test_y, test_z
