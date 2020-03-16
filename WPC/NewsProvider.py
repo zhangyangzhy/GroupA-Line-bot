@@ -7,6 +7,11 @@ class NewsProvider:
         self.__userid = userid
         self.__message = message
 
+    def __handle_exception(self,type):
+        if type=='format_error':
+            return 'The format is incorrect.'
+
+
     # handle different type message
     def handle_message(self):
         if self.__message=='@News':
@@ -22,7 +27,8 @@ class NewsProvider:
         elif self.__message=='@List':
             return 'developing list'
         else:
-            return 'exception'
+            return self.__handle_exception('format_error')
+
 
 
 
