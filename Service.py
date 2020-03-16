@@ -338,7 +338,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
 # Handler function for Text Message
 def handle_TextMessage(event):
     if str(event.message.text).startswith("@"):
-        message=NewsProvider(event.source.user_id).getNews()
+        message = NewsProvider(event.source.user_id,event.message.text).getNews()
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(message))
