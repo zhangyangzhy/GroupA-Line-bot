@@ -1,4 +1,4 @@
-from NewsConnection import NewsConnection
+from WPC.NewsConnection import NewsConnection
 
 
 class NewsProvider:

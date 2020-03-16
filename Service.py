@@ -13,13 +13,12 @@ from linebot.exceptions import (InvalidSignatureError)
 from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
                             TextMessage, TextSendMessage, ImageMessage,
                             VideoMessage, FileMessage, StickerMessage,
-                            StickerSendMessage, TemplateSendMessage,
+                            TemplateSendMessage,
                             ButtonsTemplate, PostbackAction, LocationMessage,
                             AudioMessage, QuickReplyButton, QuickReply,
-                            BubbleContainer, FlexSendMessage, LocationSendMessage,ConfirmTemplate)
-from linebot.utils import PY3
+                            FlexSendMessage, LocationSendMessage,ConfirmTemplate)
 
-import NewsProvider
+from WPC.NewsProvider import NewsProvider
 from ZHY import ProcessMessage
 import json
 from urllib import parse
@@ -339,7 +338,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
 def handle_TextMessage(event):
     if str(event.message.text).startswith("@"):
         print(event.message.text)
-        message = NewsProvider(event.source.user_id,event.message.text).getNews()
+        message = NewsProvider(event.source.user_id, event.message.text).getNews()
         print(message)
         line_bot_api.reply_message(
             event.reply_token,
