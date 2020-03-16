@@ -9,6 +9,20 @@ class NewsProvider:
 
     # handle different type message
     def handle_message(self):
-        if
+        if self.__message=='@News':
+            return "developing News"
+        elif self.__message:
+            return "developing Read"
+        elif self.__message:
+            return "developing Ranking"
+        elif self.__message:
+            return "developing Favourite"
+        elif self.__message:
+            return "developing Delete"
+        elif self.__message=='@List':
+            return 'developing list'
+        else:
+            return 'exception'
+
 
 
