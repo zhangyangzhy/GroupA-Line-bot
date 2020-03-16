@@ -1,4 +1,5 @@
 from WPC.NewsConnection import NewsConnection
+import re
 
 
 class NewsProvider:
@@ -39,13 +40,22 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         if self.__message == '@News':
             return self.__fetch__news()
         elif self.__message:
-            return "developing Read"
-        elif self.__message:
+            if re.match('@Read \d+$',self.__message) is not None:
+                return 'developing Read'
+            else:
+                return self.__handle_exception('format_error')
+        elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message:
-            return "developing Favourite"
+            if re.match('@Favourite \d+$',self.__message) is not None:
+                return "developing Favourite"
+            else:
+                return self.__handle_exception('format_error')
         elif self.__message:
-            return "developing Delete"
+            if re.match('@Delete \d+$',self.__message) is not None:
+                return "developing Delete"
+            else:
+                return self.__handle_exception('format_error')
         elif self.__message == '@List':
             return 'developing list'
         else:
