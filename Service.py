@@ -254,13 +254,13 @@ def handle_PostbackEvent(event):
 
 1. Reply '@News' to get the the latest news about the novel coronavirus from the Internet;
 
-2. Reply '@Read News title' to view the specific News details you have pass the the title;
+2. Reply '@Read News index' to view the specific News details you have pass the the title;
 
 3. Reply '@Ranking' to return a news ranking, which will include the hottest News in a day;
 
-4. Reply '@Favourite News title' to collect your favourite News;
+4. Reply '@Favourite News index' to collect your favourite News;
 
-5. Reply '@Delete News title' to delete the News you have collected before.
+5. Reply '@Delete News index' to delete the News you have collected before.
 
 6. Reply '@List' to return the News list you have collected before;''')
     elif event.postback.data == "#Module 3 Instruction":
