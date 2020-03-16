@@ -7,6 +7,7 @@ class NewsProvider:
         self.__userid = userid
         self.__message = message
 
-    # get the latest news
-    def getNews(self):
-        return self.__message+''+self.__userid
+    # handle different type message
+    def handle_message(self):
+
+

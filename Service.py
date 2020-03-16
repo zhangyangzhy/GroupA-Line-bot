@@ -262,7 +262,7 @@ def handle_PostbackEvent(event):
 
 5. Reply '@Delete News title' to delete the News you have collected before.
 
-6. Reply '@list' to return the News list you have collected before;''')
+6. Reply '@List' to return the News list you have collected before;''')
     elif event.postback.data == "#Module 3 Instruction":
         msg = TextSendMessage('''Module 3 Instruction:
 
@@ -337,9 +337,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
 # Handler function for Text Message
 def handle_TextMessage(event):
     if str(event.message.text).startswith("@"):
-        print(event.message.text)
-        message = NewsProvider(event.source.user_id, event.message.text).getNews()
-        print(message)
+        message = NewsProvider(event.source.user_id, event.message.text).handle_message()
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(message))
