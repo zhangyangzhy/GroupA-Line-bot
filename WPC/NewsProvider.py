@@ -75,7 +75,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message == '@Favourite':
-            redis = self.__redis
+            # redis = self.__redis
             # redis.set(self.__userid, self.__news_list[int(index)])
             return TextSendMessage("Saved Successfully")
         # elif re.match('@Delete \d+$', self.__message) is not None:
