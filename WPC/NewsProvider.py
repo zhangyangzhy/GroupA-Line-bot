@@ -30,7 +30,7 @@ China’s actions also coincided with the United States’ tensions with Europe.
 The Tourism Board’s latest statistics showed a drop of more than 96 per cent year-on-year for the period, after the government rolled out measures from February 8 to stem the spread of Covid-19 by closing all but three border checkpoints with mainland China.
 For the rest of that month, the average number of tourists coming to the city per day stood at just 3,300, of which only one in five were mainland Chinese, who used to account for about 80 per cent of all Hong Kong’s visitors.
 Across the globe, 47 countries and jurisdictions issued advisories against travel to mainland China, with 28 of those including Hong Kong.''',
-            'https://cdn.i-scmp.com/sites/default/files/styles/1200x800/public/d8/images/methode/2020/03/16/859fdc2c-6670-11ea-8e9f-2d196083a37c_image_hires_092715.JPG?itok=GZL5O4os&v=1584322050'))
+            'https://cdn.i-scmp.com/sites/default/files/styles/1200x800/public/d8/images/methode/2020/03/16/859fdc2c-6670-11ea-8e9f-2d196083a37c_image_hires_092715.JPG'))
 
     def __handle_exception(self, type):
         if type == 'format_error':
@@ -41,9 +41,9 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         for new in self.__news_list:
             columns.append(CarouselColumn(
                 # thumbnail_image_url=new.get_url(),
-                thumbnailImageUrl="https://example.com/bot/images/item2.jpg",
-                title=new.get_title()[0:10],
-                text=new.get_content()[0:30]+'...',
+                thumbnailImageUrl='https://cdn.i-scmp.com/sites/default/files/styles/1200x800/public/d8/images/methode/2020/03/16/859fdc2c-6670-11ea-8e9f-2d196083a37c_image_hires_092715.JPG',
+                title=new.get_title()[0:30],
+                text=new.get_content()[0:35] + '...',
                 actions=[
                     PostbackTemplateAction(
                         label='postback1',
