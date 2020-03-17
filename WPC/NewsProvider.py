@@ -1,10 +1,8 @@
-from urllib import parse
-
-from linebot.models import CarouselColumn, PostbackTemplateAction, TemplateSendMessage, CarouselTemplate, TextMessage
+from linebot.models import CarouselColumn, PostbackTemplateAction, TemplateSendMessage, CarouselTemplate, TextSendMessage
 
 from WPC.News import News
 from WPC.NewsConnection import NewsConnection
-import re
+
 
 
 class NewsProvider:
@@ -36,7 +34,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
 
     def __handle_exception(self, type):
         if type == 'format_error':
-            return TextMessage('The format is incorrect.')
+            return TextSendMessage('The format is incorrect.')
 
     def __fetch__news(self):
         columns = []
@@ -79,7 +77,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         elif self.__message == '@Favourite':
             redis = self.__redis
             # redis.set(self.__userid, self.__news_list[int(index)])
-            return TextMessage("Saved Successfully")
+            return TextSendMessage("Saved Successfully")
         # elif re.match('@Delete \d+$', self.__message) is not None:
         #     return "developing Delete"
         elif self.__message == '@List':
