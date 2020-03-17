@@ -44,69 +44,22 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
 
         json = {
             "type": "template",
-            "altText": "this is a carousel template",
+            "altText": "this is a confirm template",
             "template": {
-                "type": "carousel",
-                "columns": [
+                "type": "confirm",
+                "text": "Are you sure?",
+                "actions": [
                     {
-                        "thumbnailImageUrl": "https://example.com/bot/images/item1.jpg",
-                        "imageBackgroundColor": "#FFFFFF",
-                        "title": "this is menu",
-                        "text": "description",
-                        "defaultAction": {
-                            "type": "uri",
-                            "label": "View detail",
-                            "uri": "http://example.com/page/123"
-                        },
-                        "actions": [
-                            {
-                                "type": "postback",
-                                "label": "Buy",
-                                "data": "action=buy&itemid=111"
-                            },
-                            {
-                                "type": "postback",
-                                "label": "Add to cart",
-                                "data": "action=add&itemid=111"
-                            },
-                            {
-                                "type": "uri",
-                                "label": "View detail",
-                                "uri": "http://example.com/page/111"
-                            }
-                        ]
+                        "type": "message",
+                        "label": "Yes",
+                        "text": "yes"
                     },
                     {
-                        "thumbnailImageUrl": "https://example.com/bot/images/item2.jpg",
-                        "imageBackgroundColor": "#000000",
-                        "title": "this is menu",
-                        "text": "description",
-                        "defaultAction": {
-                            "type": "uri",
-                            "label": "View detail",
-                            "uri": "http://example.com/page/222"
-                        },
-                        "actions": [
-                            {
-                                "type": "postback",
-                                "label": "Buy",
-                                "data": "action=buy&itemid=222"
-                            },
-                            {
-                                "type": "postback",
-                                "label": "Add to cart",
-                                "data": "action=add&itemid=222"
-                            },
-                            {
-                                "type": "uri",
-                                "label": "View detail",
-                                "uri": "http://example.com/page/222"
-                            }
-                        ]
+                        "type": "message",
+                        "label": "No",
+                        "text": "no"
                     }
-                ],
-                "imageAspectRatio": "rectangle",
-                "imageSize": "cover"
+                ]
             }
         }
         return json
