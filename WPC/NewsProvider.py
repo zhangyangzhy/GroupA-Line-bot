@@ -40,7 +40,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
 
     def __fetch__news(self):
         columns = []
-        for index, new in self.__news_list:
+        for index, new in enumerate(self.__news_list):
             columns.append(CarouselColumn(
                 thumbnail_image_url=new.get_url(),
                 title=new.get_title()[0:25],
