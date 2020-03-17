@@ -338,28 +338,24 @@ Notice: You should add '$' at the beginning of your query when you want to test 
 # Handler function for Text Message
 def handle_TextMessage(event):
     if str(event.message.text).startswith("@"):
-        message = NewsProvider(event.source.user_id, event.message.text).handle_message()
-        line_bot_api.reply_message(
-            event.reply_token,TemplateSendMessage(alt_text='Image Carousel template', template=ImageCarouselTemplate(
-                columns=[
-                    ImageCarouselColumn(
-                        image_url='圖片網址',
-                        action=PostbackTemplateAction(
-                            label='postback1',
-                            text='postback text1',
-                            data='action=buy&itemid=1'
-                        )
-                    ),
-                    ImageCarouselColumn(
-                        image_url='圖片網址',
-                        action=PostbackTemplateAction(
-                            label='postback2',
-                            text='postback text2',
-                            data='action=buy&itemid=2'
-                        )
+        # message = NewsProvider(event.source.user_id, event.message.text).handle_message()
+        message = TemplateSendMessage(
+            alt_text='Buttons template',
+            template=ButtonsTemplate(
+                thumbnail_image_url='https://example.com/image.jpg',
+                title='Menu',
+                text='Please select',
+                actions=[
+                    PostbackTemplateAction(
+                        label='postback',
+                        text='postback text',
+                        data='action=buy&itemid=1'
                     )
                 ]
-            )))
+            )
+        )
+        line_bot_api.reply_message(
+            event.reply_token, message)
     elif str(event.message.text).startswith("$"):
         global flag
         global test_x, test_y, test_z
