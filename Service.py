@@ -336,7 +336,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
         msg = TextMessage("HIHIHIHI")
     else:
         msg = TextSendMessage("Error")
-    line_bot_api.reply_message(event.reply_token, msg)
+    line_bot_api.reply_message(event.reply_token, str(event.postback.data))
 
 
 # Handler function for Text Message
