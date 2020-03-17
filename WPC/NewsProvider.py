@@ -48,6 +48,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
                 actions=[
                     PostbackTemplateAction(
                         label='Read',
+                        text='@Read',
                         data='@Read=' + str(index)
                     ),
                     PostbackTemplateAction(
