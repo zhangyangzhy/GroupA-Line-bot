@@ -332,10 +332,8 @@ Notice: You should add '$' at the beginning of your query when you want to test 
     elif str(event.postback.data).startswith("@Read="):
         params = parse.parse_qs(event.postback.data)
         index = params['@Read'][0]
-        print('===========================================================')
-        print(index)
-        # message = NewsProvider(event.source.user_id, event.message.text).handle_message(event)
-        msg = TextSendMessage("HIHIHIHI")
+        message = NewsProvider(event.source.user_id, '@Read').handle_message(index)
+        msg = TextSendMessage(message)
     else:
         msg = TextSendMessage("Error")
     line_bot_api.reply_message(event.reply_token, msg)

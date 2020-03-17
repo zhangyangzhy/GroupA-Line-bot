@@ -69,13 +69,11 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         return self.__news_list[index]
 
     # handle different type message
-    def handle_message(self, event):
+    def handle_message(self, index):
         if self.__message == '@News':
             return self.__fetch__news()
         elif self.__message == '@Read':
-            # params = parse.parse_qs(event.postback.data)
-            # index = params['index'][0]
-            return '123'
+            return self.__news_list[index]
         elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message:
