@@ -16,7 +16,7 @@ class NewsProvider:
             '''Hong Kong has issued a red travel alert on the United States, Britain and Ireland and will impose a 14-day quarantine period on all arrivals from the three countries and Egypt from Thursday in a bid to halt the number of imported Covid-19 infections.
 Compulsory home quarantine would apply to everyone, including Hong Kong residents, arriving in the city from March 19 who had been to any of the four countries in the previous 14 days, the government announced on Sunday night.
 The red alert is the second level of a three-tier system and warns of a “significant threat” at the destination involved.''',
-            'Coronavirus: Hong Kong issues ‘red’ travel alert on the United States, Britain and Ireland and imposes quarantine measures on arrivals from the three countries and Egypt'))
+            'https://cdn.i-scmp.com/sites/default/files/styles/1200x800/public/d8/images/methode/2020/03/16/b35ac034-66b4-11ea-8e9f-2d196083a37c_image_hires_082451.jpg?itok=M3BZXPyr&v=1584318299'))
         self.__news_list.append(
             News('''Coronavirus: China vows to help Spain amid questions over EU support for its worst-hit countries''',
                  '''China has widened its coronavirus diplomacy in Europe, with Foreign Minister Wang Yi pledging medical support for Spain, which begins a national lockdown on Monday.
@@ -40,8 +40,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         columns = []
         for new in self.__news_list:
             columns.append(CarouselColumn(
-                # thumbnail_image_url=new.get_url(),
-                thumbnail_image_url='https://cdn.i-scmp.com/sites/default/files/styles/1200x800/public/d8/images/methode/2020/03/16/859fdc2c-6670-11ea-8e9f-2d196083a37c_image_hires_092715.JPG',
+                thumbnail_image_url=new.get_url(),
                 title=new.get_title()[0:30],
                 text=new.get_content()[0:35] + '...',
                 actions=[
