@@ -16,7 +16,8 @@ from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
                             TemplateSendMessage,
                             ButtonsTemplate, PostbackAction, LocationMessage,
                             AudioMessage, QuickReplyButton, QuickReply,
-                            FlexSendMessage, LocationSendMessage,ConfirmTemplate)
+                            FlexSendMessage, LocationSendMessage, ConfirmTemplate, ImageCarouselTemplate,
+                            ImageCarouselColumn,PostbackTemplateAction)
 
 from WPC.NewsProvider import NewsProvider
 from ZHY import ProcessMessage
@@ -339,8 +340,26 @@ def handle_TextMessage(event):
     if str(event.message.text).startswith("@"):
         message = NewsProvider(event.source.user_id, event.message.text).handle_message()
         line_bot_api.reply_message(
-            event.reply_token,
-            TemplateSendMessage(message))
+            event.reply_token,TemplateSendMessage(alt_text='Image Carousel template', template=ImageCarouselTemplate(
+                columns=[
+                    ImageCarouselColumn(
+                        image_url='圖片網址',
+                        action=PostbackTemplateAction(
+                            label='postback1',
+                            text='postback text1',
+                            data='action=buy&itemid=1'
+                        )
+                    ),
+                    ImageCarouselColumn(
+                        image_url='圖片網址',
+                        action=PostbackTemplateAction(
+                            label='postback2',
+                            text='postback text2',
+                            data='action=buy&itemid=2'
+                        )
+                    )
+                ]
+            )))
     elif str(event.message.text).startswith("$"):
         global flag
         global test_x, test_y, test_z
