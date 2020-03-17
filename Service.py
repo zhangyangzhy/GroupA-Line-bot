@@ -23,7 +23,6 @@ from ZHY import ProcessMessage
 import json
 from urllib import parse
 
-
 app = Flask(__name__)
 
 # get channel_secret and channel_access_token from your environment variable
@@ -240,7 +239,7 @@ def handle_FollowEvent(event):
 # Handler function for Postback Event
 def handle_PostbackEvent(event):
     if event.postback.data == "#Module 1 Instruction":
-        msg =TextSendMessage( '''Module 1 Instruction:
+        msg = TextSendMessage('''Module 1 Instruction:
 
 1. Reply '#my' to find the historical store information that you have published, and you can modify and delete them;
 
@@ -286,7 +285,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
         )
     elif str(event.postback.data).startswith("GetComment="):
         params = parse.parse_qs(event.postback.data)
-        message = ProcessMessage(event.source.user_id,params["GetComment"][0]).public("GetComment")
+        message = ProcessMessage(event.source.user_id, params["GetComment"][0]).public("GetComment")
         msg = TextSendMessage(message)
     elif str(event.postback.data).startswith("Delete="):
         params = parse.parse_qs(event.postback.data)
@@ -300,11 +299,11 @@ Notice: You should add '$' at the beginning of your query when you want to test 
                     actions=[
                         PostbackAction(
                             label='Yes',
-                            data='Delete='+id+'&Step=2'
+                            data='Delete=' + id + '&Step=2'
                         ),
                         PostbackAction(
                             label='No',
-                            data='Delete='+id+'&Step=3',
+                            data='Delete=' + id + '&Step=3',
                         )
                     ]
                 )
@@ -332,6 +331,11 @@ Notice: You should add '$' at the beginning of your query when you want to test 
     elif str(event.postback.data).startswith("@Read="):
         params = parse.parse_qs(event.postback.data)
         index = params['@Read'][0]
+        message = NewsProvider(event.source.user_id, '@Read').handle_message(index)
+        msg = TextSendMessage(message)
+    elif str(event.postback.data).startswith("@Favourite="):
+        params = parse.parse_qs(event.postback.data)
+        index = params['@Favourite'][0]
         message = NewsProvider(event.source.user_id, '@Read').handle_message(index)
         msg = TextSendMessage(message)
     else:
@@ -406,14 +410,14 @@ def handle_LocationMessage(event):
     }
     text = json.dumps(dic)
     message = ProcessMessage(event.source.user_id,
-                           text).public("LocationMessage")
+                             text).public("LocationMessage")
     if isinstance(message, dict):
         line_bot_api.reply_message(
             event.reply_token,
             FlexSendMessage(alt_text='Published Information Near Me', contents=message))
     else:
         line_bot_api.reply_message(event.reply_token,
-                               TextSendMessage(message))
+                                   TextSendMessage(message))
 
 
 # Handler function for Sticker Message
@@ -463,7 +467,7 @@ def handle_AudioMessage(event):
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(usage='Usage: python ' + __file__ +
-                                ' [--port <port>] [--help]')
+                                      ' [--port <port>] [--help]')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
