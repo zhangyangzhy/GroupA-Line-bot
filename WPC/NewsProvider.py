@@ -1,3 +1,5 @@
+from urllib import parse
+
 from linebot.models import CarouselColumn, PostbackTemplateAction, TemplateSendMessage, CarouselTemplate
 
 from WPC.News import News
@@ -38,7 +40,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
 
     def __fetch__news(self):
         columns = []
-        for new in self.__news_list:
+        for index, new in self.__news_list:
             columns.append(CarouselColumn(
                 thumbnail_image_url=new.get_url(),
                 title=new.get_title()[0:25],
@@ -46,17 +48,16 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
                 actions=[
                     PostbackTemplateAction(
                         label='Read',
-                        text='postback text1',
-                        data='action=buy&itemid=1'
+                        text='@Read',
+                        data='index=' + str(index)
                     ),
                     PostbackTemplateAction(
                         label='Favourite',
-                        text='postback text1',
-                        data='action=buy&itemid=1'
+                        text='@Favourite',
+                        data='index=' + str(index)
                     )
                 ]
             ))
-
         message = TemplateSendMessage(
             alt_text='Carousel template',
             template=CarouselTemplate(
@@ -65,15 +66,18 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         )
         return message
 
+    # find news by id
+    def __find_news(self, index):
+        return self.__news_list[index]
+
     # handle different type message
-    def handle_message(self):
+    def handle_message(self, event):
         if self.__message == '@News':
             return self.__fetch__news()
-        elif self.__message:
-            if re.match('@Read \d+$', self.__message) is not None:
-                return 'developing Read'
-            else:
-                return self.__handle_exception('format_error')
+        elif self.__message == '@Read':
+            params = parse.parse_qs(event.postback.data)
+            index = params['index'][0]
+            return index
         elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message:
