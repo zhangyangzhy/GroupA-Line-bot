@@ -73,7 +73,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         if self.__message == '@News':
             return self.__fetch__news()
         elif self.__message == '@Read':
-            return self.__news_list[int(index)]
+            return self.__news_list[int(index)].get_content()
         elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message:
