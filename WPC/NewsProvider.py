@@ -41,7 +41,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         for new in self.__news_list:
             columns.append(CarouselColumn(
                 thumbnail_image_url=new.get_url(),
-                title=new.get_title(),
+                title=new.get_title()[0:25],
                 text=new.get_content()[0:35] + '...',
                 actions=[
                     PostbackTemplateAction(
