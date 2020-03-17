@@ -333,7 +333,7 @@ Notice: You should add '$' at the beginning of your query when you want to test 
         params = parse.parse_qs(event.postback.data)
         index = params['@Read'][0]
         # message = NewsProvider(event.source.user_id, event.message.text).handle_message(event)
-        msg = TextMessage(index)
+        msg = TextMessage('hello')
     else:
         msg = TextSendMessage("Error")
     line_bot_api.reply_message(event.reply_token, msg)
