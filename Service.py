@@ -16,8 +16,8 @@ from linebot.models import (FollowEvent, PostbackEvent, MessageEvent,
                             TemplateSendMessage,
                             ButtonsTemplate, PostbackAction, LocationMessage,
                             AudioMessage, QuickReplyButton, QuickReply,
-                            FlexSendMessage, LocationSendMessage, ConfirmTemplate, ImageCarouselTemplate,
-                            ImageCarouselColumn,PostbackTemplateAction)
+                            FlexSendMessage, LocationSendMessage, ConfirmTemplate, PostbackTemplateAction,
+                            CarouselTemplate, CarouselColumn)
 
 from WPC.NewsProvider import NewsProvider
 from ZHY import ProcessMessage
@@ -340,22 +340,37 @@ def handle_TextMessage(event):
     if str(event.message.text).startswith("@"):
         # message = NewsProvider(event.source.user_id, event.message.text).handle_message()
         message = TemplateSendMessage(
-            alt_text='Buttons template',
-            template=ButtonsTemplate(
-                thumbnail_image_url='https://example.com/image.jpg',
-                title='Menu',
-                text='Please select',
-                actions=[
-                    PostbackTemplateAction(
-                        label='postback',
-                        text='postback text',
-                        data='action=buy&itemid=1'
+            alt_text='Carousel template',
+            template=CarouselTemplate(
+                columns=[
+                    CarouselColumn(
+                        thumbnail_image_url='https://example.com/item1.jpg',
+                        title='this is menu1',
+                        text='description1',
+                        actions=[
+                            PostbackTemplateAction(
+                                label='postback1',
+                                text='postback text1',
+                                data='action=buy&itemid=1'
+                            )
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://example.com/item2.jpg',
+                        title='this is menu2',
+                        text='description2',
+                        actions=[
+                            PostbackTemplateAction(
+                                label='postback2',
+                                text='postback text2',
+                                data='action=buy&itemid=2'
+                            )
+                        ]
                     )
                 ]
             )
         )
-        line_bot_api.reply_message(
-            event.reply_token, message)
+        line_bot_api.reply_message(event.reply_token, message)
     elif str(event.message.text).startswith("$"):
         global flag
         global test_x, test_y, test_z
