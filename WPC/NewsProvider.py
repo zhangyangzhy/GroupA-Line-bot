@@ -76,10 +76,10 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
             return self.__news_list[int(index)].get_content()
         elif self.__message == '@Ranking':
             return "developing Ranking"
-        elif re.match('@Favourite \d+$', self.__message) is not None:
-            return "developing Favourite"
-        elif re.match('@Delete \d+$', self.__message) is not None:
-            return "developing Delete"
+        # elif re.match('@Favourite \d+$', self.__message) is not None:
+        #     return "developing Favourite"
+        # elif re.match('@Delete \d+$', self.__message) is not None:
+        #     return "developing Delete"
         elif self.__message == '@List':
             return 'developing list'
         else:
