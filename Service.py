@@ -340,7 +340,7 @@ def handle_TextMessage(event):
         message = NewsProvider(event.source.user_id, event.message.text).handle_message()
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(message))
+            TemplateSendMessage(message))
     elif str(event.message.text).startswith("$"):
         global flag
         global test_x, test_y, test_z
