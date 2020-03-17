@@ -49,12 +49,12 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
                     PostbackTemplateAction(
                         label='Read',
                         text='@Read',
-                        data='index=' + str(index)
+                        data='@Read=' + str(index)
                     ),
                     PostbackTemplateAction(
                         label='Favourite',
                         text='@Favourite',
-                        data='index=' + str(index)
+                        data='@Favourite=' + str(index)
                     )
                 ]
             ))
