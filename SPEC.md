@@ -52,15 +52,21 @@ In terms of the Redis database, two tables will be created, one is used to store
 
 >Developed by 19434405 WU Peicong
 
-The main objective of this section is to design and implementation of summaries of news, which include two functions. Users can retrieve the latest news about the novel coronavirus through the chatbot. Also, it provides news ranking, which depends on the news recently read. 
+The main objective of this section is to design and implementation of summaries of news, which include three functions. Users can retrieve the latest news about the novel coronavirus through the LINE Chatbot. Also, it provides news ranking, which depends on the news recently read. Besides, users can make a favourite list to collect the news, which they interested in.
 
-***1. One is the latest news***
+***1. Latest news***
  
-* When users send the `"News"` keyword, the chatbot will send the latest news about the novel coronavirus from the Internet back to users.
+* When users send the `"News"` keyword, the LINE Chatbot will send the latest news about the novel coronavirus from the Internet back to users.
 
 * This function will consume other services.
 
-***2. Another is news ranking***
+* After that, the LINE Chatbot will send a carousel list to display the latest news. And at the bottom of each news, we can simply provide two functions, Read and Favourite.
+
+* If users press `"Read"` button, the LINE Chatbot will return corresponding news details.
+
+* If users press `"Favourite"` button, the LINE Chatbot will send a message to prompt users with "Saved Successful". 
+
+***2. News ranking***
  
 * Users can send chatbot `"Ranking"`, it will return a news ranking to users. That is to say after reading the news, the chatbot will count the reading time and store it into a Redis database.
 
@@ -68,6 +74,15 @@ The main objective of this section is to design and implementation of summaries 
 
 * Similarly, the ranking will also provide the title of news and the reading time related to it. Users can read the news on the ranking with sending the title of news to the chatbot.
 
+***3. Favourite List***
+
+* If users want to see the past news they are interested in, they can simply send `"List"` to the LINE Chatbot to check out their favourite list.
+
+* The Favourite List provide two functions. 
+
+* One is `"Read"` button at the button of each favorited news. Similarly, if users press it, the LINE Chatbot will automatically send the details news. 
+
+* The other is `"Delete"` button. Users can press it to remote the specific news from the Favourite List.
 
 ### Module 3 - the Measurement Against Coronavirus
 
