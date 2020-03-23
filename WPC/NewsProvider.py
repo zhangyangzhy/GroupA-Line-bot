@@ -79,7 +79,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
             # redis.set(self.__userid, self.__news_list[int(index)])
             redis = NewsConnection().connect()
             news = News('Title1', 'Content1', 'Url1')
-            redis.hset(self.__userid, news)
+            redis.hset(self.__userid, '1', news.__dict__)
             return 'Saved Successfully'
         # elif re.match('@Delete \d+$', self.__message) is not None:
         #     return "developing Delete"
