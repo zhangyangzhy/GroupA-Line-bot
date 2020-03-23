@@ -13,3 +13,5 @@ class News:
     def get_title(self):
         return self.__title
 
+
+

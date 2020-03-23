@@ -1,8 +1,8 @@
-from linebot.models import CarouselColumn, PostbackTemplateAction, TemplateSendMessage, CarouselTemplate, TextSendMessage
+from linebot.models import CarouselColumn, PostbackTemplateAction, TemplateSendMessage, CarouselTemplate, \
+    TextSendMessage
 
 from WPC.News import News
 from WPC.NewsConnection import NewsConnection
-
 
 
 class NewsProvider:
@@ -77,6 +77,9 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         elif self.__message == '@Favourite':
             # redis = self.__redis
             # redis.set(self.__userid, self.__news_list[int(index)])
+            redis = NewsConnection().connect()
+            news = News('Title1', 'Content1', 'Url1')
+            redis.hset(self.__userid, news)
             return 'Saved Successfully'
         # elif re.match('@Delete \d+$', self.__message) is not None:
         #     return "developing Delete"
