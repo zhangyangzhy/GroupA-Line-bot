@@ -45,12 +45,17 @@ class NewsProvider:
         if type == 'format_error':
             return TextSendMessage('The format is incorrect.')
 
+
+        # print(news['_News__content'])
+
     def __fetch_news(self):
+        list = self.__redis.hkeys('temp')
         columns = []
-        for index, new in enumerate(self.__news_list):
+        for index in list:
+            news = json.loads(self.__redis.hget('temp', index))
             columns.append(CarouselColumn(
-                thumbnail_image_url=new.get_url(),
-                text=new.get_title(),
+                thumbnail_image_url=news['_News__url'],
+                text=news['_News__title'],
                 actions=[
                     PostbackTemplateAction(
                         label='Read',
