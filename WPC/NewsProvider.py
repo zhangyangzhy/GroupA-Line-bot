@@ -88,7 +88,6 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         )
         return message
 
-
     # find news by id
     def __find_news(self, index):
         return self.__news_list[index]
@@ -109,7 +108,6 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
             redis.hset(self.__userid, index, json.dumps(news.__dict__))
             return 'Saved Successfully'
         elif self.__message == '@List':
-
-            return 'developing list'
+            return self.__fetch_list()
         else:
             return self.__handle_exception('format_error')
