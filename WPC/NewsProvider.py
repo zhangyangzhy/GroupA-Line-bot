@@ -38,7 +38,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         if type == 'format_error':
             return TextSendMessage('The format is incorrect.')
 
-    def __fetch__news(self):
+    def __fetch_news(self):
         columns = []
         for index, new in enumerate(self.__news_list):
             columns.append(CarouselColumn(
@@ -64,6 +64,31 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         )
         return message
 
+    # get user list
+    def __fetch_list(self):
+        list = self.__redis.hkeys(self.__userid)
+        columns = []
+        for index in list:
+            columns.append(CarouselColumn(
+                thumbnail_image_url='#',
+                title=str(index),
+                text='test',
+                actions=[
+                    PostbackTemplateAction(
+                        label='Delete',
+                        data='@Delete=' + str(index)
+                    )
+                ]
+            ))
+        message = TemplateSendMessage(
+            alt_text='Carousel template',
+            template=CarouselTemplate(
+                columns=columns
+            )
+        )
+        return message
+
+
     # find news by id
     def __find_news(self, index):
         return self.__news_list[index]
@@ -71,23 +96,20 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
     # handle different type message
     def handle_message(self, index):
         if self.__message == '@News':
-            return self.__fetch__news()
+            return self.__fetch_news()
         elif self.__message == '@Read':
             return self.__news_list[int(index)].get_content()
         elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message == '@Favourite':
-            # redis = self.__redis
-            # redis.set(self.__userid, self.__news_list[int(index)])
             redis = NewsConnection().connect()
             news = News('Title1', 'Content1', 'Url1')
             redis.incr('index')
             index = redis.get('index')
             redis.hset(self.__userid, index, json.dumps(news.__dict__))
             return 'Saved Successfully'
-        # elif re.match('@Delete \d+$', self.__message) is not None:
-        #     return "developing Delete"
         elif self.__message == '@List':
+
             return 'developing list'
         else:
             return self.__handle_exception('format_error')
