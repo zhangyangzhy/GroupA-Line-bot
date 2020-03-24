@@ -93,6 +93,12 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
     def __find_news(self, index):
         return self.__news_list[index]
 
+    # delete news by id
+    def __delete_favourite(self, index):
+        redis = self.__redis
+        flag = redis.hdel(self.__userid, index)
+        return flag
+
     # handle different type message
     def handle_message(self, index):
         if self.__message == '@News':
@@ -111,5 +117,9 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
             return 'Saved Successfully'
         elif self.__message == '@List':
             return self.__fetch_list()
+        elif self.__message == '@Delete':
+            # handel exception 0
+            if self.__delete_favourite(index) == 1:
+                return 'Delete Successfully'
         else:
             return self.__handle_exception('format_error')
