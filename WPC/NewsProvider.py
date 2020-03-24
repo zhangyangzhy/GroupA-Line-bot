@@ -74,10 +74,10 @@ class NewsProvider:
         favourites = self.__redis.hkeys(self.__userid)
         columns = []
         for index in favourites:
+            news = json.loads(self.__redis.hget(self.__userid, index))
             columns.append(CarouselColumn(
-                thumbnail_image_url='https://cdn.i-scmp.com/sites/default/files/styles/1200x800/public/d8/images/methode/2020/03/16/b35ac034-66b4-11ea-8e9f-2d196083a37c_image_hires_082451.jpg?itok=M3BZXPyr&v=1584318299',
-                title=str(index),
-                text='test',
+                thumbnail_image_url=news['_News__url'],
+                text=news['_News__title'],
                 actions=[
                     PostbackTemplateAction(
                         label='Delete',
