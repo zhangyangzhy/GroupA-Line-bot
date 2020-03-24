@@ -5,4 +5,4 @@ pytz
 geopy
 xmltodict
 requests
-BeautifulSoup
+beautifulsoup4
