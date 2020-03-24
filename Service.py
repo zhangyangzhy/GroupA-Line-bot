@@ -338,6 +338,11 @@ Notice: You should add '$' at the beginning of your query when you want to test 
         index = params['@Favourite'][0]
         message = NewsProvider(event.source.user_id, '@Favourite').handle_message(index)
         msg = TextSendMessage(message)
+    elif str(event.postback.data).startswith("@Delete="):
+        params = parse.parse_qs(event.postback.data)
+        index = params['@Delete'][0]
+        message = NewsProvider(event.source.user_id, '@Delete').handle_message(index)
+        msg = TextSendMessage(message)
     else:
         msg = TextSendMessage("Error")
     line_bot_api.reply_message(event.reply_token, msg)
