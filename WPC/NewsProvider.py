@@ -15,7 +15,7 @@ class NewsProvider:
         self.__redis = NewsConnection().connect()
         self.__userid = userid
         self.__message = message
-        self.__redi.delete('temp')
+        self.__redis.delete('temp')
         url = 'https://www.news.gov.hk/en/categories/covid19/html/articlelist.rss.xml'
         html = requests.get(url)
         xmlparse = xmltodict.parse(html.text)
@@ -45,8 +45,6 @@ class NewsProvider:
         if type == 'format_error':
             return TextSendMessage('The format is incorrect.')
 
-
-        # print(news['_News__content'])
 
     def __fetch_news(self):
         list = self.__redis.hkeys('temp')
@@ -100,7 +98,7 @@ class NewsProvider:
         return message
 
     # find news by id
-    def __find_news(self, index):
+    def __read_news(self, index):
         return self.__news_list[index]
 
     # delete news by id
@@ -122,7 +120,7 @@ class NewsProvider:
         if self.__message == '@News':
             return self.__fetch_news()
         elif self.__message == '@Read':
-            return self.__news_list[int(index)].get_content()
+            return self.__read_news(index)
         elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message == '@Favourite':
