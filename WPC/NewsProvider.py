@@ -99,6 +99,14 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         flag = redis.hdel(self.__userid, index)
         return flag
 
+    def __favourite_news(self, index):
+        redis = self.__redis
+        news = News('Title1', 'Content1', 'Url1')
+        redis.incr('index')
+        index = redis.get('index')
+        flag = redis.hset(self.__userid, index, json.dumps(news.__dict__))
+        return flag
+
     # handle different type message
     def handle_message(self, index):
         if self.__message == '@News':
@@ -108,13 +116,9 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message == '@Favourite':
-            # todo refactor
-            redis = NewsConnection().connect()
-            news = News('Title1', 'Content1', 'Url1')
-            redis.incr('index')
-            index = redis.get('index')
-            redis.hset(self.__userid, index, json.dumps(news.__dict__))
-            return 'Saved Successfully'
+            # handel exception 0
+            if self.__favourite_news(index) == 1:
+                return 'Saved Successfully'
         elif self.__message == '@List':
             return self.__fetch_list()
         elif self.__message == '@Delete':
