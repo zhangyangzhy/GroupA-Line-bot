@@ -99,7 +99,8 @@ class NewsProvider:
 
     # find news by id
     def __read_news(self, index):
-        return self.__news_list[index]
+        news = json.loads(self.__redis.hget('temp', index))
+        return news['_News__content']
 
     # delete news by id
     def __delete_favourite(self, index):
