@@ -66,9 +66,10 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
 
     # get user list
     def __fetch_list(self):
-        list = self.__redis.hkeys(self.__userid)
+        print('========================================================')
+        favourites = self.__redis.hkeys(self.__userid)
         columns = []
-        for index in list:
+        for index in favourites:
             columns.append(CarouselColumn(
                 thumbnail_image_url='#',
                 title=str(index),
@@ -101,6 +102,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         elif self.__message == '@Ranking':
             return "developing Ranking"
         elif self.__message == '@Favourite':
+            # todo refactor
             redis = NewsConnection().connect()
             news = News('Title1', 'Content1', 'Url1')
             redis.incr('index')
