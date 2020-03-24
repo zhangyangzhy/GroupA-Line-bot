@@ -99,6 +99,8 @@ class NewsProvider:
 
     # find news by id
     def __read_news(self, index):
+        print('=====================================================')
+        print(index)
         news = json.loads(self.__redis.hget('temp', index))
         return news['_News__content']
 
@@ -111,8 +113,6 @@ class NewsProvider:
     def __favourite_news(self, index):
         redis = self.__redis
         news = News('Title1', 'Content1', 'Url1')
-        redis.incr('index')
-        index = redis.get('index')
         flag = redis.hset(self.__userid, index, json.dumps(news.__dict__))
         return flag
 
