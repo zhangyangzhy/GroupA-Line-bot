@@ -15,7 +15,7 @@ class NewsProvider:
         self.__redis = NewsConnection().connect()
         self.__userid = userid
         self.__message = message
-        self.__news_list = []
+        self.__redi.delete('temp')
         url = 'https://www.news.gov.hk/en/categories/covid19/html/articlelist.rss.xml'
         html = requests.get(url)
         xmlparse = xmltodict.parse(html.text)
@@ -37,7 +37,9 @@ class NewsProvider:
                 content += paragraph.text
                 content += '\n'
             detail = content
-            self.__news_list.append(News(title, detail, image))
+            self.__redis.incr('index')
+            index = self.__redis.get('index')
+            self.__redis.hset('temp', index, json.dumps(News(title, detail, image).__dict__))
 
     def __handle_exception(self, type):
         if type == 'format_error':
