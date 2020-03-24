@@ -29,6 +29,7 @@ class NewsProvider:
         xmlparse = xmltodict.parse(html.text)
         items = xmlparse['rss']['channel']['item']
         count = 0
+        columns = []
         for item in items:
             count += 1
             if count == 4:
@@ -48,31 +49,28 @@ class NewsProvider:
             self.__redis.incr('index')
             index = self.__redis.get('index')
             self.__redis.hset('temp', index, json.dumps(News(title, detail, image).__dict__))
-            list = self.__redis.hkeys('temp')
-            columns = []
-            for index in list:
-                news = json.loads(self.__redis.hget('temp', index))
-                columns.append(CarouselColumn(
-                    thumbnail_image_url=news['_News__url'],
-                    text=news['_News__title'],
-                    actions=[
-                        PostbackTemplateAction(
-                            label='Read',
-                            data='@Read=' + str(index)
-                        ),
-                        PostbackTemplateAction(
-                            label='Favourite',
-                            data='@Favourite=' + str(index)
-                        )
-                    ]
-                ))
-            message = TemplateSendMessage(
-                alt_text='Carousel template',
-                template=CarouselTemplate(
-                    columns=columns
-                )
+            columns.append(CarouselColumn(
+                thumbnail_image_url=image,
+                text=title,
+                actions=[
+                    PostbackTemplateAction(
+                        label='Read',
+                        data='@Read=' + str(index)
+                    ),
+                    PostbackTemplateAction(
+                        label='Favourite',
+                        data='@Favourite=' + str(index)
+                    )
+                ]
+            ))
+        message = TemplateSendMessage(
+            alt_text='Carousel template',
+            template=CarouselTemplate(
+                columns=columns
             )
-            return message
+        )
+        return message
+
 
     # get user list
     def __fetch_list(self):
@@ -100,6 +98,8 @@ class NewsProvider:
 
     # find news by id
     def __read_news(self, index):
+        print('=====================================================')
+        print(index)
         news = json.loads(self.__redis.hget('temp', index))
         return news['_News__content']
 
