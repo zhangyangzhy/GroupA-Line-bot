@@ -49,8 +49,7 @@ class NewsProvider:
         for index, new in enumerate(self.__news_list):
             columns.append(CarouselColumn(
                 thumbnail_image_url=new.get_url(),
-                title=new.get_title()[0:25],
-                text=new.get_content()[0:35] + '...',
+                title=new.get_title()[0:40],
                 actions=[
                     PostbackTemplateAction(
                         label='Read',
