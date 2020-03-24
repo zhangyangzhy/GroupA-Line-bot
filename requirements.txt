@@ -6,3 +6,4 @@ geopy
 xmltodict
 requests
 bs4
+lxml
