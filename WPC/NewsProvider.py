@@ -49,7 +49,7 @@ class NewsProvider:
         for index, new in enumerate(self.__news_list):
             columns.append(CarouselColumn(
                 thumbnail_image_url=new.get_url(),
-                title=new.get_title()[0:40],
+                title=new.get_title()[0:39],
                 actions=[
                     PostbackTemplateAction(
                         label='Read',
@@ -71,7 +71,6 @@ class NewsProvider:
 
     # get user list
     def __fetch_list(self):
-        print('========================================================')
         favourites = self.__redis.hkeys(self.__userid)
         columns = []
         for index in favourites:
