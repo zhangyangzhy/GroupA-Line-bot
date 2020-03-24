@@ -72,29 +72,32 @@ class NewsProvider:
     # get user list
     def __fetch_list(self):
         favourites = self.__redis.hkeys(self.__userid)
-        columns = []
-        for index in favourites:
-            news = json.loads(self.__redis.hget(self.__userid, index))
-            columns.append(CarouselColumn(
-                thumbnail_image_url=news['_News__url'],
-                text=news['_News__title'],
-                actions=[
-                    PostbackTemplateAction(
-                        label='Read',
-                        data='@Read=' + str(index)
-                    ),
-                    PostbackTemplateAction(
-                        label='Delete',
-                        data='@Delete=' + str(index)
-                    )
-                ]
-            ))
-        message = TemplateSendMessage(
-            alt_text='Carousel template',
-            template=CarouselTemplate(
-                columns=columns
+        if favourites:
+            columns = []
+            for index in favourites:
+                news = json.loads(self.__redis.hget(self.__userid, index))
+                columns.append(CarouselColumn(
+                    thumbnail_image_url=news['_News__url'],
+                    text=news['_News__title'],
+                    actions=[
+                        PostbackTemplateAction(
+                            label='Read',
+                            data='@Read=' + str(index)
+                        ),
+                        PostbackTemplateAction(
+                            label='Delete',
+                            data='@Delete=' + str(index)
+                        )
+                    ]
+                ))
+            message = TemplateSendMessage(
+                alt_text='Carousel template',
+                template=CarouselTemplate(
+                    columns=columns
+                )
             )
-        )
+        else:
+            message = TextSendMessage('Empty!')
         return message
 
     # find news by id
