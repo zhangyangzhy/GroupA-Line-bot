@@ -16,11 +16,9 @@ class NewsProvider:
         self.__userid = userid
         self.__message = message
 
-
     def __handle_exception(self, type):
         if type == 'format_error':
             return TextSendMessage('The format is incorrect.')
-
 
     def __fetch_news(self):
         self.__redis.delete('temp')
@@ -71,7 +69,6 @@ class NewsProvider:
         )
         return message
 
-
     # get user list
     def __fetch_list(self):
         favourites = self.__redis.hkeys(self.__userid)
@@ -98,8 +95,6 @@ class NewsProvider:
 
     # find news by id
     def __read_news(self, index):
-        print('=====================================================')
-        print(index)
         news = json.loads(self.__redis.hget('temp', index))
         return news['_News__content']
 
@@ -111,8 +106,7 @@ class NewsProvider:
 
     def __favourite_news(self, index):
         redis = self.__redis
-        news = News('Title1', 'Content1', 'Url1')
-        flag = redis.hset(self.__userid, index, json.dumps(news.__dict__))
+        flag = redis.hset(self.__userid, index, redis.hget('temp', index))
         return flag
 
     # handle different type message
