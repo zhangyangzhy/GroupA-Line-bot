@@ -39,7 +39,6 @@ class NewsProvider:
             detail = content
             self.__news_list.append(News(title, detail, image))
 
-
     def __handle_exception(self, type):
         if type == 'format_error':
             return TextSendMessage('The format is incorrect.')
@@ -49,7 +48,7 @@ class NewsProvider:
         for index, new in enumerate(self.__news_list):
             columns.append(CarouselColumn(
                 thumbnail_image_url=new.get_url(),
-                title=new.get_title()[0:39],
+                text=new.get_title(),
                 actions=[
                     PostbackTemplateAction(
                         label='Read',
