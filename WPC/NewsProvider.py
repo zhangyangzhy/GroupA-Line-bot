@@ -71,7 +71,7 @@ Across the globe, 47 countries and jurisdictions issued advisories against trave
         columns = []
         for index in favourites:
             columns.append(CarouselColumn(
-                thumbnail_image_url='#',
+                thumbnail_image_url='https://cdn.i-scmp.com/sites/default/files/styles/1200x800/public/d8/images/methode/2020/03/16/b35ac034-66b4-11ea-8e9f-2d196083a37c_image_hires_082451.jpg?itok=M3BZXPyr&v=1584318299',
                 title=str(index),
                 text='test',
                 actions=[
