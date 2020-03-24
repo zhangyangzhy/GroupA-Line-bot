@@ -80,6 +80,10 @@ class NewsProvider:
                 text=news['_News__title'],
                 actions=[
                     PostbackTemplateAction(
+                        label='Read',
+                        data='@Read=' + str(index)
+                    ),
+                    PostbackTemplateAction(
                         label='Delete',
                         data='@Delete=' + str(index)
                     )
@@ -95,7 +99,10 @@ class NewsProvider:
 
     # find news by id
     def __read_news(self, index):
-        news = json.loads(self.__redis.hget('temp', index))
+        if self.__redis.hexists('temp', index):
+            news = json.loads(self.__redis.hget('temp', index))
+        else:
+            news = json.loads(self.__redis.hget(self.__userid, index))
         return news['_News__content']
 
     # delete news by id
