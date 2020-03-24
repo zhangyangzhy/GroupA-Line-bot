@@ -3,3 +3,6 @@ redis
 line-bot-sdk
 pytz
 geopy
+xmltodict
+requests
+BeautifulSoup
