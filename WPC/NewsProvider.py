@@ -15,6 +15,14 @@ class NewsProvider:
         self.__redis = NewsConnection().connect()
         self.__userid = userid
         self.__message = message
+
+
+    def __handle_exception(self, type):
+        if type == 'format_error':
+            return TextSendMessage('The format is incorrect.')
+
+
+    def __fetch_news(self):
         self.__redis.delete('temp')
         url = 'https://www.news.gov.hk/en/categories/covid19/html/articlelist.rss.xml'
         html = requests.get(url)
@@ -40,38 +48,31 @@ class NewsProvider:
             self.__redis.incr('index')
             index = self.__redis.get('index')
             self.__redis.hset('temp', index, json.dumps(News(title, detail, image).__dict__))
-
-    def __handle_exception(self, type):
-        if type == 'format_error':
-            return TextSendMessage('The format is incorrect.')
-
-
-    def __fetch_news(self):
-        list = self.__redis.hkeys('temp')
-        columns = []
-        for index in list:
-            news = json.loads(self.__redis.hget('temp', index))
-            columns.append(CarouselColumn(
-                thumbnail_image_url=news['_News__url'],
-                text=news['_News__title'],
-                actions=[
-                    PostbackTemplateAction(
-                        label='Read',
-                        data='@Read=' + str(index)
-                    ),
-                    PostbackTemplateAction(
-                        label='Favourite',
-                        data='@Favourite=' + str(index)
-                    )
-                ]
-            ))
-        message = TemplateSendMessage(
-            alt_text='Carousel template',
-            template=CarouselTemplate(
-                columns=columns
+            list = self.__redis.hkeys('temp')
+            columns = []
+            for index in list:
+                news = json.loads(self.__redis.hget('temp', index))
+                columns.append(CarouselColumn(
+                    thumbnail_image_url=news['_News__url'],
+                    text=news['_News__title'],
+                    actions=[
+                        PostbackTemplateAction(
+                            label='Read',
+                            data='@Read=' + str(index)
+                        ),
+                        PostbackTemplateAction(
+                            label='Favourite',
+                            data='@Favourite=' + str(index)
+                        )
+                    ]
+                ))
+            message = TemplateSendMessage(
+                alt_text='Carousel template',
+                template=CarouselTemplate(
+                    columns=columns
+                )
             )
-        )
-        return message
+            return message
 
     # get user list
     def __fetch_list(self):
@@ -99,8 +100,6 @@ class NewsProvider:
 
     # find news by id
     def __read_news(self, index):
-        print('=====================================================')
-        print(index)
         news = json.loads(self.__redis.hget('temp', index))
         return news['_News__content']
 
