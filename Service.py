@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import os
 import sys
 import redis
-import requests
 
 from argparse import ArgumentParser
 
@@ -60,12 +59,6 @@ def callback():
     # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
-
-    # url = ""
-    print(body)
-    print(type(request.headers))
-    # r = requests.post(url, data=json.dumps(data), headers=headers)
-
 
     # parse webhook body
     try:
