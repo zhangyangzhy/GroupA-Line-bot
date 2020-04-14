@@ -63,7 +63,7 @@ def callback():
 
     # url = ""
     print(body)
-    print(request.headers)
+    print(type(request.headers))
     # r = requests.post(url, data=json.dumps(data), headers=headers)
 
 
