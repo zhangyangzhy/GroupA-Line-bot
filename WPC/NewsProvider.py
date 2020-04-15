@@ -125,12 +125,11 @@ class NewsProvider:
     def __ranking(self):
         if self.__redis.exists('ranking'):
             self.__redis.expire('ranking', 15)
-            print('==========================================================')
         ranking = self.__redis.hkeys('ranking')
         if ranking:
             columns = []
             for index in ranking:
-                news = json.loads(self.__redis.hget(self.__userid, index))
+                news = json.loads(self.__redis.hget('ranking', index))
                 columns.append(CarouselColumn(
                     thumbnail_image_url=news['_News__url'],
                     text=news['_News__title'],
