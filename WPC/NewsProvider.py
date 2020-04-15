@@ -124,7 +124,7 @@ class NewsProvider:
 
     def __ranking(self):
         if self.__redis.exists('ranking'):
-            self.__redis.expire('ranking', 15)
+            self.__redis.expire('ranking', 86400)
         ranking = self.__redis.hkeys('ranking')
         if ranking:
             columns = []
