@@ -103,10 +103,11 @@ class NewsProvider:
     # find news by id
     def __read_news(self, index):
         if self.__redis.hexists('temp', index):
-            news = json.loads(self.__redis.hget('temp', index))
+            data = json.loads(self.__redis.hget('temp', index))
         else:
-            news = json.loads(self.__redis.hget(self.__userid, index))
-        self.__redis.hset('ranking', index, news)
+            data = json.loads(self.__redis.hget(self.__userid, index))
+        news = json.loads(data)
+        self.__redis.hset('ranking', index, data)
         return news['_News__content']
 
     # delete news by id
