@@ -106,6 +106,7 @@ class NewsProvider:
             news = json.loads(self.__redis.hget('temp', index))
         else:
             news = json.loads(self.__redis.hget(self.__userid, index))
+        self.__redis.hset('ranking', index, news)
         return news['_News__content']
 
     # delete news by id
@@ -119,6 +120,36 @@ class NewsProvider:
         flag = redis.hset(self.__userid, index, redis.hget('temp', index))
         return flag
 
+    def __ranking(self):
+        ranking = self.__redis.hkeys(self.__userid)
+        if ranking:
+            columns = []
+            for index in ranking:
+                news = json.loads(self.__redis.hget(self.__userid, index))
+                columns.append(CarouselColumn(
+                    thumbnail_image_url=news['_News__url'],
+                    text=news['_News__title'],
+                    actions=[
+                        PostbackTemplateAction(
+                            label='Read',
+                            data='@Read=' + str(index)
+                        ),
+                        PostbackTemplateAction(
+                            label='Delete',
+                            data='@Delete=' + str(index)
+                        )
+                    ]
+                ))
+            message = TemplateSendMessage(
+                alt_text='Carousel template',
+                template=CarouselTemplate(
+                    columns=columns
+                )
+            )
+        else:
+            message = TextSendMessage('Empty!')
+        return message
+
     # handle different type message
     def handle_message(self, index):
         if self.__message == '@News':
@@ -126,7 +157,7 @@ class NewsProvider:
         elif self.__message == '@Read':
             return self.__read_news(index)
         elif self.__message == '@Ranking':
-            return TextSendMessage('ranking...')
+            return self.__ranking()
         elif self.__message == '@Favourite':
             # handel exception 0
             if self.__favourite_news(index) == 1:
