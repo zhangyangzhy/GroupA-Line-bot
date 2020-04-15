@@ -123,7 +123,10 @@ class NewsProvider:
         return flag
 
     def __ranking(self):
-        ranking = self.__redis.hkeys(self.__userid)
+        if self.__redis.exists('ranking'):
+            self.__redis.expire('ranking', 15)
+            print('==========================================================')
+        ranking = self.__redis.hkeys('ranking')
         if ranking:
             columns = []
             for index in ranking:
