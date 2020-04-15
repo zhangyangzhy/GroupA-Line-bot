@@ -126,7 +126,7 @@ class NewsProvider:
         elif self.__message == '@Read':
             return self.__read_news(index)
         elif self.__message == '@Ranking':
-            return "developing Ranking"
+            return TextSendMessage('ranking...')
         elif self.__message == '@Favourite':
             # handel exception 0
             if self.__favourite_news(index) == 1:
