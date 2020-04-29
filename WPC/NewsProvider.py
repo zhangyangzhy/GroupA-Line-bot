@@ -159,8 +159,6 @@ class NewsProvider:
         if self.__message == '@News':
             return self.__fetch_news()
         elif self.__message == '@Read':
-            print('==========================================')
-            print(index)
             return self.__read_news(index)
         elif self.__message == '@Ranking':
             return self.__ranking()

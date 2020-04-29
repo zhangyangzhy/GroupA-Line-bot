@@ -56,7 +56,7 @@ The main objective of this section is to design and implementation of summaries 
 
 ***1. Latest news***
  
-* When users send the `"News"` keyword, the LINE Chatbot will send the latest news about the novel coronavirus from the Internet back to users.
+* When users send the `"@News"` keyword, the LINE Chatbot will send the latest news about the novel coronavirus from the news.gov.hk and push back to users.
 
 * This function will consume other services.
 
@@ -64,11 +64,11 @@ The main objective of this section is to design and implementation of summaries 
 
 * If users press `"Read"` button, the LINE Chatbot will return corresponding news details.
 
-* If users press `"Favourite"` button, the LINE Chatbot will send a message to prompt users with "Saved Successful". 
+* If users press `"@Favourite"` button, the LINE Chatbot will send a message to prompt users with "Saved Successful". 
 
 ***2. News ranking***
  
-* Users can send chatbot `"Ranking"`, it will return a news ranking to users. That is to say after reading the news, the chatbot will count the reading time and store it into a Redis database.
+* Users can send chatbot `"@Ranking"`, it will return a news ranking to users. That is to say after reading the news, the chatbot will count the reading time and store it into a Redis database.
 
 * The ranking will dynamically adjust the news. For example, the life of news is only for a day. The news will be removed, which exists more than a day. Of course, if the news is valid, the ranking will base on the reading time.
 
@@ -76,7 +76,7 @@ The main objective of this section is to design and implementation of summaries 
 
 ***3. Favourite List***
 
-* If users want to see the past news they are interested in, they can simply send `"List"` to the LINE Chatbot to check out their favourite list.
+* If users want to see the past news they are interested in, they can simply send `"@Favourite"` to the LINE Chatbot to check out their favourite list.
 
 * The Favourite List provide two functions. 
 
