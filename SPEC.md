@@ -76,7 +76,7 @@ The main objective of this section is to design and implementation of summaries 
 
 ***3. Favourite List***
 
-* If users want to see the past news they are interested in, they can simply send `"@Favourite"` to the LINE Chatbot to check out their favourite list.
+* If users want to see the past news they are interested in, they can simply send `"@List"` to the LINE Chatbot to check out their favourite list.
 
 * The Favourite List provide two functions. 
 
